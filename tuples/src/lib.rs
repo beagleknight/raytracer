@@ -68,6 +68,19 @@ impl std::ops::Mul<f64> for Tuple {
     }
 }
 
+impl std::ops::Div<f64> for Tuple {
+    type Output = Self;
+
+    fn div(self, other: f64) -> Self::Output {
+        Self {
+            x: self.x / other,
+            y: self.y / other,
+            z: self.z / other,
+            w: self.w / other,
+        }
+    }
+}
+
 pub fn tuple(x: f64, y: f64, z: f64, w: f64) -> Tuple {
     Tuple { x, y, z, w }
 }
@@ -78,6 +91,32 @@ pub fn point(x: f64, y: f64, z: f64) -> Tuple {
 
 pub fn vector(x: f64, y: f64, z: f64) -> Tuple {
     Tuple { x, y, z, w: 0.0 }
+}
+
+pub fn magnitude(v: &Tuple) -> f64 {
+    (v.x.powi(2) + v.y.powi(2) + v.z.powi(2) + v.w.powi(2)).sqrt()
+}
+
+pub fn normalize(v: &Tuple) -> Tuple {
+    let m = magnitude(v);
+    Tuple {
+        x: v.x / m,
+        y: v.y / m,
+        z: v.z / m,
+        w: v.w / m,
+    }
+}
+
+pub fn dot(v1: &Tuple, v2: &Tuple) -> f64 {
+    v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w
+}
+
+pub fn cross(v1: &Tuple, v2: &Tuple) -> Tuple {
+    vector(
+        v1.y * v2.z - v1.z * v2.y,
+        v1.z * v2.x - v1.x * v2.z,
+        v1.x * v2.y - v1.y * v2.x,
+    )
 }
 
 #[cfg(test)]
@@ -169,5 +208,62 @@ mod tests {
     fn multiplying_a_tuple_by_a_fraction() {
         let a = tuple(1.0, -2.0, 3.0, -4.0);
         assert_eq!(a * 0.5, tuple(0.5, -1.0, 1.5, -2.0));
+    }
+
+    #[test]
+    fn dividing_a_tuple_by_a_scalar() {
+        let a = tuple(1.0, -2.0, 3.0, -4.0);
+        assert_eq!(a / 2.0, tuple(0.5, -1.0, 1.5, -2.0));
+    }
+
+    #[test]
+    fn computing_the_magnitude_of_some_vectors() {
+        let v1 = vector(1.0, 0.0, 0.0);
+        let v2 = vector(0.0, 1.0, 0.0);
+        let v3 = vector(0.0, 0.0, 1.0);
+        let v4 = vector(1.0, 2.0, 3.0);
+        let v5 = vector(-1.0, -2.0, -3.0);
+        assert_eq!(magnitude(&v1), 1.0);
+        assert_eq!(magnitude(&v2), 1.0);
+        assert_eq!(magnitude(&v3), 1.0);
+        assert_eq!(magnitude(&v4), (14.0 as f64).sqrt());
+        assert_eq!(magnitude(&v5), (14.0 as f64).sqrt());
+    }
+
+    #[test]
+    fn normalizing_some_vectors() {
+        let v1 = vector(4.0, 0.0, 0.0);
+        let v2 = vector(1.0, 2.0, 3.0);
+        assert_eq!(normalize(&v1), vector(1.0, 0.0, 0.0));
+        assert_eq!(
+            normalize(&v2),
+            vector(
+                1.0 / (14.0 as f64).sqrt(),
+                2.0 / (14.0 as f64).sqrt(),
+                3.0 / (14.0 as f64).sqrt()
+            )
+        );
+    }
+
+    #[test]
+    fn magnitude_of_a_normalized_vector() {
+        let v = vector(1.0, 2.0, 3.0);
+        let norm = normalize(&v);
+        assert_eq!(magnitude(&norm), 1.0);
+    }
+
+    #[test]
+    fn dot_product_of_two_vectors() {
+        let a = vector(1.0, 2.0, 3.0);
+        let b = vector(2.0, 3.0, 4.0);
+        assert_eq!(dot(&a, &b), 20.0);
+    }
+
+    #[test]
+    fn cross_product_of_two_vectors() {
+        let a = vector(1.0, 2.0, 3.0);
+        let b = vector(2.0, 3.0, 4.0);
+        assert_eq!(cross(&a, &b), vector(-1.0, 2.0, -1.0));
+        assert_eq!(cross(&b, &a), vector(1.0, -2.0, 1.0));
     }
 }
