@@ -1,4 +1,6 @@
-#[derive(Debug, PartialEq, Copy, Clone)]
+use float_cmp::ApproxEq;
+
+#[derive(Debug, Copy, Clone)]
 pub struct Tuple {
     pub x: f64,
     pub y: f64,
@@ -13,6 +15,15 @@ impl Tuple {
 
     fn is_vector(&self) -> bool {
         self.w == 0.0
+    }
+}
+
+impl PartialEq for Tuple {
+    fn eq(&self, other: &Self) -> bool {
+        self.x.approx_eq(other.x, (std::f64::EPSILON, 2))
+            && self.y.approx_eq(other.y, (std::f64::EPSILON, 2))
+            && self.z.approx_eq(other.z, (std::f64::EPSILON, 2))
+            && self.w.approx_eq(other.w, (std::f64::EPSILON, 2))
     }
 }
 
