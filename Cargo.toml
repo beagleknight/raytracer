@@ -4,5 +4,6 @@ members = [
   "tuples",
   "colors",
   "canvas",
+  "matrices",
   "cannon"
 ]

@@ -37,6 +37,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "matrices"
+version = "0.1.0"
+dependencies = [
+ "float-cmp 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tuples 0.1.0",
+]
+
+[[package]]
 name = "num-traits"
 version = "0.2.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"

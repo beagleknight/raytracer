@@ -92,6 +92,17 @@ impl std::ops::Div<f64> for Tuple {
     }
 }
 
+impl From<[f64; 4]> for Tuple {
+    fn from(v: [f64; 4]) -> Tuple {
+        Tuple {
+            x: v[0],
+            y: v[1],
+            z: v[2],
+            w: v[3],
+        }
+    }
+}
+
 pub fn tuple(x: f64, y: f64, z: f64, w: f64) -> Tuple {
     Tuple { x, y, z, w }
 }
