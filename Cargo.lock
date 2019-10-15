@@ -22,6 +22,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "clock"
+version = "0.1.0"
+dependencies = [
+ "canvas 0.1.0",
+ "colors 0.1.0",
+ "matrices 0.1.0",
+ "transformations 0.1.0",
+ "tuples 0.1.0",
+]
+
+[[package]]
 name = "colors"
 version = "0.1.0"
 dependencies = [

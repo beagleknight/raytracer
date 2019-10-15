@@ -1,6 +1,6 @@
 use matrices::{matrix_multiply, IDENTITY};
 
-trait MatrixTransformations {
+pub trait MatrixTransformations {
     fn translate(self, x: f64, y: f64, z: f64) -> Self;
     fn scale(self, x: f64, y: f64, z: f64) -> Self;
     fn rotate_x(self, r: f64) -> Self;
