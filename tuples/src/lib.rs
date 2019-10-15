@@ -20,10 +20,10 @@ impl Tuple {
 
 impl PartialEq for Tuple {
     fn eq(&self, other: &Self) -> bool {
-        self.x.approx_eq(other.x, (std::f64::EPSILON, 2))
-            && self.y.approx_eq(other.y, (std::f64::EPSILON, 2))
-            && self.z.approx_eq(other.z, (std::f64::EPSILON, 2))
-            && self.w.approx_eq(other.w, (std::f64::EPSILON, 2))
+        self.x.approx_eq(other.x, (0.00001, 2))
+            && self.y.approx_eq(other.y, (0.00001, 2))
+            && self.z.approx_eq(other.z, (0.00001, 2))
+            && self.w.approx_eq(other.w, (0.00001, 2))
     }
 }
 

@@ -53,6 +53,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "transformations"
+version = "0.1.0"
+dependencies = [
+ "matrices 0.1.0",
+ "tuples 0.1.0",
+]
+
+[[package]]
 name = "tuples"
 version = "0.1.0"
 dependencies = [

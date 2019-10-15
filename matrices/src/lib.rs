@@ -1,14 +1,14 @@
 use float_cmp::ApproxEq;
 use tuples::{tuple, Tuple};
 
-const IDENTITY: [[f64; 4]; 4] = [
+pub const IDENTITY: [[f64; 4]; 4] = [
     [1.0, 0.0, 0.0, 0.0],
     [0.0, 1.0, 0.0, 0.0],
     [0.0, 0.0, 1.0, 0.0],
     [0.0, 0.0, 0.0, 1.0],
 ];
 
-fn matrix_multiply(a: &[[f64; 4]; 4], b: &[[f64; 4]; 4]) -> [[f64; 4]; 4] {
+pub fn matrix_multiply(a: &[[f64; 4]; 4], b: &[[f64; 4]; 4]) -> [[f64; 4]; 4] {
     let mut m = [[0.0; 4]; 4];
     for row in 0..4 {
         for col in 0..4 {
@@ -21,7 +21,7 @@ fn matrix_multiply(a: &[[f64; 4]; 4], b: &[[f64; 4]; 4]) -> [[f64; 4]; 4] {
     m
 }
 
-fn matrix_tuple_multiplty(a: &[[f64; 4]; 4], b: &Tuple) -> Tuple {
+pub fn matrix_tuple_multiply(a: &[[f64; 4]; 4], b: &Tuple) -> Tuple {
     let mut result = [0.0; 4];
     let b = [b.x, b.y, b.z, b.w];
     for row in 0..4 {
@@ -152,7 +152,7 @@ fn is_invertible(a: &[[f64; 4]; 4]) -> bool {
     determinant_4(a) != 0.0
 }
 
-fn inverse(a: &[[f64; 4]; 4]) -> [[f64; 4]; 4] {
+pub fn inverse(a: &[[f64; 4]; 4]) -> [[f64; 4]; 4] {
     let mut cofactors = [[0.0; 4]; 4];
     for row in 0..4 {
         for col in 0..4 {
@@ -285,7 +285,7 @@ mod tests {
             [0.0, 0.0, 0.0, 1.0],
         ];
         let b = tuple(1.0, 2.0, 3.0, 1.0);
-        assert_eq!(matrix_tuple_multiplty(&a, &b), tuple(18.0, 24.0, 33.0, 1.0));
+        assert_eq!(matrix_tuple_multiply(&a, &b), tuple(18.0, 24.0, 33.0, 1.0));
     }
 
     #[test]
@@ -302,7 +302,7 @@ mod tests {
     #[test]
     fn multipliying_a_matrix_by_a_tuple() {
         let a = tuple(1.0, 2.0, 3.0, 4.0);
-        assert_eq!(matrix_tuple_multiplty(&IDENTITY, &a), a);
+        assert_eq!(matrix_tuple_multiply(&IDENTITY, &a), a);
     }
 
     #[test]
