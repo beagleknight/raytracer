@@ -37,7 +37,7 @@ fn print_projectile_velocity(projectile: &Projectile) {
 fn main() -> std::io::Result<()> {
     let mut ticks = 0;
     let start = point(0.0, 1.0, 0.0);
-    let velocity = normalize(vector(1.0, 1.8, 0.0)) * 11.25;
+    let velocity = normalize(&vector(1.0, 1.8, 0.0)) * 11.25;
     let gravity = vector(0.0, -0.1, 0.0);
     let wind = vector(-0.01, 0.0, 0.0);
     let environment = Environment { gravity, wind };
