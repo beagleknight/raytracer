@@ -26,7 +26,7 @@ impl Sphere {
         self.transform = *t;
     }
 
-    fn intersect(&self, ray: &Ray) -> Option<[Intersection<Sphere>; 2]> {
+    pub fn intersect(&self, ray: &Ray) -> Option<[Intersection<Sphere>; 2]> {
         let ray = ray.transform(&inverse(&self.transform));
         let sphere_to_ray = ray.origin - point(0.0, 0.0, 0.0);
         let a = dot(&ray.direction, &ray.direction);

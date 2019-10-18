@@ -10,5 +10,6 @@ members = [
   "spheres",
   "intersections",
   "cannon",
-  "clock"
+  "clock",
+  "draw_sphere"
 ]
