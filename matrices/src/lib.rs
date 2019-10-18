@@ -30,7 +30,7 @@ pub fn matrix_tuple_multiply(a: &[[f64; 4]; 4], b: &Tuple) -> Tuple {
     result.into()
 }
 
-fn transpose(a: &[[f64; 4]; 4]) -> [[f64; 4]; 4] {
+pub fn transpose(a: &[[f64; 4]; 4]) -> [[f64; 4]; 4] {
     let mut m = [[0.0; 4]; 4];
     for row in 0..4 {
         for col in 0..4 {

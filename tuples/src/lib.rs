@@ -141,6 +141,10 @@ pub fn cross(v1: &Tuple, v2: &Tuple) -> Tuple {
     )
 }
 
+pub fn reflect(vin: &Tuple, normal: &Tuple) -> Tuple {
+    *vin - *normal * 2.0 * dot(vin, normal)
+}
+
 #[cfg(test)]
 mod tests {
     use crate::*;
@@ -287,5 +291,21 @@ mod tests {
         let b = vector(2.0, 3.0, 4.0);
         assert_eq!(cross(&a, &b), vector(-1.0, 2.0, -1.0));
         assert_eq!(cross(&b, &a), vector(1.0, -2.0, 1.0));
+    }
+
+    #[test]
+    fn reflecting_a_vector_approaching_at_45_degree() {
+        let v = vector(1.0, -1.0, 0.0);
+        let n = vector(0.0, 1.0, 0.0);
+        let r = reflect(&v, &n);
+        assert_eq!(r, vector(1.0, 1.0, 0.0));
+    }
+
+    #[test]
+    fn reflecting_a_vector_off_a_slanted_surface() {
+        let v = vector(0.0, -1.0, 0.0);
+        let n = vector((2.0 as f64).sqrt() / 2.0, (2.0 as f64).sqrt() / 2.0, 0.0);
+        let r = reflect(&v, &n);
+        assert_eq!(r, vector(1.0, 0.0, 0.0));
     }
 }
