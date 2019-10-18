@@ -3,14 +3,17 @@ use std::io::prelude::*;
 
 use canvas::{canvas, canvas_to_ppm, write_pixel};
 use colors::color;
+use matrices::IDENTITY;
 use rays::Ray;
 use spheres::Sphere;
+use transformations::MatrixTransformations;
 use tuples::{normalize, point};
 
 fn main() -> std::io::Result<()> {
     let canvas_size = 500;
     let mut c = canvas(canvas_size, canvas_size);
-    let s = Sphere::new();
+    let mut s = Sphere::new();
+    s.transform(&IDENTITY.scale(0.5, 0.25, 1.0));
     let color = color(1.0, 0.0, 0.0);
     let ray_origin = point(0.0, 0.0, -5.0);
     let wall_z = 10.0;

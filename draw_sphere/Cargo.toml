@@ -12,3 +12,5 @@ colors = { path = "../colors" }
 tuples = { path = "../tuples" }
 spheres = { path = "../spheres" }
 rays = { path = "../rays" }
+matrices = { path = "../matrices" }
+transformations = { path = "../transformations" }
