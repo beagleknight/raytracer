@@ -3,8 +3,7 @@ use uuid::Uuid;
 use intersections::{Intersection, Object};
 use matrices::{inverse, IDENTITY};
 use rays::Ray;
-use transformations::MatrixTransformations;
-use tuples::{dot, point, vector};
+use tuples::{dot, point};
 
 #[derive(Debug, PartialEq)]
 pub struct Sphere {
@@ -57,6 +56,10 @@ impl Sphere {
 #[cfg(test)]
 mod tests {
     use crate::*;
+    use matrices::IDENTITY;
+    use rays::Ray;
+    use transformations::MatrixTransformations;
+    use tuples::{point, vector};
 
     #[test]
     fn ray_intersects_a_sphere_at_two_points() {

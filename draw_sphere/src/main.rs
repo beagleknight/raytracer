@@ -1,13 +1,10 @@
-use core::f64::consts::PI;
 use std::fs::File;
 use std::io::prelude::*;
 
 use canvas::{canvas, canvas_to_ppm, write_pixel};
 use colors::color;
-use matrices::{matrix_tuple_multiply, IDENTITY};
 use rays::Ray;
 use spheres::Sphere;
-use transformations::MatrixTransformations;
 use tuples::{normalize, point};
 
 fn main() -> std::io::Result<()> {

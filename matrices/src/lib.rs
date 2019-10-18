@@ -1,5 +1,5 @@
 use float_cmp::ApproxEq;
-use tuples::{tuple, Tuple};
+use tuples::Tuple;
 
 pub const IDENTITY: [[f64; 4]; 4] = [
     [1.0, 0.0, 0.0, 0.0],
@@ -148,7 +148,7 @@ fn cofactor_4(a: &[[f64; 4]; 4], row: usize, col: usize) -> f64 {
     minor
 }
 
-fn is_invertible(a: &[[f64; 4]; 4]) -> bool {
+pub fn is_invertible(a: &[[f64; 4]; 4]) -> bool {
     determinant_4(a) != 0.0
 }
 
@@ -169,7 +169,7 @@ pub fn inverse(a: &[[f64; 4]; 4]) -> [[f64; 4]; 4] {
     result
 }
 
-fn approx_eq(a: &[[f64; 4]; 4], b: &[[f64; 4]; 4]) -> bool {
+pub fn approx_eq(a: &[[f64; 4]; 4], b: &[[f64; 4]; 4]) -> bool {
     for row in 0..4 {
         for col in 0..4 {
             if !a[row][col].approx_eq(b[row][col], (0.00001, 2)) {
@@ -183,6 +183,7 @@ fn approx_eq(a: &[[f64; 4]; 4], b: &[[f64; 4]; 4]) -> bool {
 #[cfg(test)]
 mod tests {
     use crate::*;
+    use tuples::tuple;
 
     #[test]
     fn constructing_and_inspecting_a_4x4_matrix() {

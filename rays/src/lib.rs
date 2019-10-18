@@ -1,6 +1,5 @@
-use matrices::{matrix_tuple_multiply, IDENTITY};
-use transformations::MatrixTransformations;
-use tuples::{point, vector, Tuple};
+use matrices::matrix_tuple_multiply;
+use tuples::Tuple;
 
 pub struct Ray {
     pub origin: Tuple,
@@ -8,7 +7,7 @@ pub struct Ray {
 }
 
 impl Ray {
-    fn position(&self, t: f64) -> Tuple {
+    pub fn position(&self, t: f64) -> Tuple {
         self.origin + self.direction * t
     }
 
@@ -23,6 +22,9 @@ impl Ray {
 #[cfg(test)]
 mod tests {
     use crate::*;
+    use matrices::IDENTITY;
+    use transformations::MatrixTransformations;
+    use tuples::{point, vector};
 
     #[test]
     fn creating_and_querying_a_ray() {
