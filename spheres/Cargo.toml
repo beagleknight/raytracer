@@ -13,3 +13,4 @@ tuples = { path = "../tuples" }
 intersections = { path = "../intersections" }
 matrices = { path = "../matrices" }
 transformations = { path = "../transformations" }
+materials = { path = "../materials" }

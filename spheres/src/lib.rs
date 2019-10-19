@@ -1,6 +1,7 @@
 use uuid::Uuid;
 
 use intersections::{Intersection, Object};
+use materials::Material;
 use matrices::{inverse, matrix_tuple_multiply, transpose, IDENTITY};
 use rays::Ray;
 use tuples::{dot, normalize, point, Tuple};
@@ -9,6 +10,7 @@ use tuples::{dot, normalize, point, Tuple};
 pub struct Sphere {
     id: Uuid,
     transform: [[f64; 4]; 4],
+    pub material: Material,
 }
 
 impl Object for Sphere {}
@@ -18,6 +20,7 @@ impl Sphere {
         Sphere {
             id: Uuid::new_v4(),
             transform: IDENTITY,
+            material: Material::default(),
         }
     }
 
@@ -251,5 +254,20 @@ mod tests {
             -((2.0 as f64).sqrt() / 2.0),
         ));
         assert_eq!(n, vector(0.0, 0.97014, -0.24254));
+    }
+
+    #[test]
+    fn sphere_has_a_default_material() {
+        let s = Sphere::new();
+        assert_eq!(s.material, Material::default());
+    }
+
+    #[test]
+    fn sphere_may_be_assigned_a_material() {
+        let mut s = Sphere::new();
+        let mut m = Material::default();
+        m.ambient = 1.0;
+        s.material = m;
+        assert_eq!(s.material, m);
     }
 }

@@ -3,6 +3,7 @@ use std::io::prelude::*;
 
 use canvas::{canvas, canvas_to_ppm, write_pixel};
 use colors::color;
+use lights::PointLight;
 use matrices::IDENTITY;
 use rays::Ray;
 use spheres::Sphere;
@@ -11,10 +12,14 @@ use tuples::{normalize, point};
 
 fn main() -> std::io::Result<()> {
     let canvas_size = 500;
+    let light = PointLight {
+        position: point(-10.0, 10.0, -10.0),
+        intensity: color(1.0, 1.0, 1.0),
+    };
     let mut c = canvas(canvas_size, canvas_size);
     let mut s = Sphere::new();
-    s.transform(&IDENTITY.scale(0.5, 0.25, 1.0));
-    let color = color(1.0, 0.0, 0.0);
+    s.material.color = color(0.443, 0.502, 0.725);
+    // s.transform(&IDENTITY.scale(0.5, 0.25, 1.0));
     let ray_origin = point(0.0, 0.0, -5.0);
     let wall_z = 10.0;
     let wall_size = 7.0;
@@ -31,10 +36,16 @@ fn main() -> std::io::Result<()> {
                 origin: ray_origin,
                 direction: normalize(&(position - ray_origin)),
             };
-            let xs = s.intersect(&r);
 
-            if xs.is_some() {
-                write_pixel(&mut c, x as usize, (canvas_size - y as i32) as usize, color);
+            if let Some(intersection) = s.intersect(&r) {
+                let point = r.position(intersection[0].t);
+                let normal = intersection[0].object.normal_at(&point);
+                let eye = -r.direction;
+                let color = intersection[0]
+                    .object
+                    .material
+                    .lightning(&light, &point, &eye, &normal);
+                write_pixel(&mut c, x as usize, y as usize, color);
             }
         }
     }

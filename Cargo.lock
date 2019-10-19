@@ -58,6 +58,7 @@ version = "0.1.0"
 dependencies = [
  "canvas 0.1.0",
  "colors 0.1.0",
+ "lights 0.1.0",
  "matrices 0.1.0",
  "rays 0.1.0",
  "spheres 0.1.0",
@@ -86,6 +87,23 @@ version = "0.1.0"
 name = "libc"
 version = "0.2.64"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "lights"
+version = "0.1.0"
+dependencies = [
+ "colors 0.1.0",
+ "tuples 0.1.0",
+]
+
+[[package]]
+name = "materials"
+version = "0.1.0"
+dependencies = [
+ "colors 0.1.0",
+ "lights 0.1.0",
+ "tuples 0.1.0",
+]
 
 [[package]]
 name = "matrices"
@@ -221,6 +239,7 @@ name = "spheres"
 version = "0.1.0"
 dependencies = [
  "intersections 0.1.0",
+ "materials 0.1.0",
  "matrices 0.1.0",
  "rays 0.1.0",
  "transformations 0.1.0",

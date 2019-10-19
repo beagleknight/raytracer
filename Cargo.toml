@@ -9,6 +9,8 @@ members = [
   "rays",
   "spheres",
   "intersections",
+  "lights",
+  "materials",
   "cannon",
   "clock",
   "draw_sphere"

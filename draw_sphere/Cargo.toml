@@ -14,3 +14,4 @@ spheres = { path = "../spheres" }
 rays = { path = "../rays" }
 matrices = { path = "../matrices" }
 transformations = { path = "../transformations" }
+lights = { path = "../lights" }
