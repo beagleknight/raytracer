@@ -11,6 +11,20 @@ version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
+name = "camera"
+version = "0.1.0"
+dependencies = [
+ "canvas 0.1.0",
+ "colors 0.1.0",
+ "float-cmp 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "matrices 0.1.0",
+ "rays 0.1.0",
+ "transformations 0.1.0",
+ "tuples 0.1.0",
+ "world 0.1.0",
+]
+
+[[package]]
 name = "cannon"
 version = "0.1.0"
 dependencies = [
@@ -82,6 +96,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "intersections"
 version = "0.1.0"
+dependencies = [
+ "rays 0.1.0",
+ "tuples 0.1.0",
+]
 
 [[package]]
 name = "libc"
@@ -288,6 +306,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "winapi-x86_64-pc-windows-gnu"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "world"
+version = "0.1.0"
+dependencies = [
+ "colors 0.1.0",
+ "intersections 0.1.0",
+ "lights 0.1.0",
+ "matrices 0.1.0",
+ "rays 0.1.0",
+ "spheres 0.1.0",
+ "transformations 0.1.0",
+ "tuples 0.1.0",
+]
 
 [metadata]
 "checksum autocfg 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = "b671c8fb71b457dd4ae18c4ba1e59aa81793daacc361d82fcd410cef0d491875"

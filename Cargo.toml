@@ -11,6 +11,8 @@ members = [
   "intersections",
   "lights",
   "materials",
+  "world",
+  "camera",
   "cannon",
   "clock",
   "draw_sphere"

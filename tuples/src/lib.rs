@@ -116,7 +116,7 @@ pub fn vector(x: f64, y: f64, z: f64) -> Tuple {
 }
 
 pub fn magnitude(v: &Tuple) -> f64 {
-    (v.x.powi(2) + v.y.powi(2) + v.z.powi(2) + v.w.powi(2)).sqrt()
+    (v.x.powf(2.0) + v.y.powf(2.0) + v.z.powf(2.0) + v.w.powf(2.0)).sqrt()
 }
 
 pub fn normalize(v: &Tuple) -> Tuple {

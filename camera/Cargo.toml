@@ -1,5 +1,5 @@
 [package]
-name = "intersections"
+name = "camera"
 version = "0.1.0"
 authors = ["David Morcillo <david.morcillo@gmail.com>"]
 edition = "2018"
@@ -7,5 +7,11 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+float-cmp = "0.5.2"
+matrices = { path = "../matrices" }
 tuples = { path = "../tuples" }
+transformations = { path = "../transformations" }
 rays = { path = "../rays" }
+world = { path = "../world" }
+colors = { path = "../colors" }
+canvas = { path = "../canvas" }

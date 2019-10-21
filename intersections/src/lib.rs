@@ -1,11 +1,48 @@
 use std::fmt::Debug;
 
-pub trait Object {}
+use rays::Ray;
+use tuples::{dot, Tuple};
 
-#[derive(Debug, PartialEq)]
+pub trait Object {
+    fn normal_at(&self, world_point: &Tuple) -> Tuple;
+}
+
+#[derive(Debug, PartialEq, Clone)]
 pub struct Intersection<'a, T: Object + Debug + PartialEq> {
     pub t: f64,
     pub object: &'a T,
+}
+
+pub struct Computations<'a, T: Object + Debug + PartialEq> {
+    pub t: f64,
+    pub object: &'a T,
+    pub point: Tuple,
+    pub eyev: Tuple,
+    pub normalv: Tuple,
+    pub inside: bool,
+}
+
+impl<'a, T: Object + Debug + PartialEq> Intersection<'a, T> {
+    pub fn prepare_computations(&self, ray: &Ray) -> Computations<T> {
+        let world_point = ray.position(self.t);
+        let eyev = -ray.direction;
+        let mut normalv = self.object.normal_at(&world_point);
+        let mut inside = false;
+
+        if dot(&normalv, &eyev) < 0.0 {
+            inside = true;
+            normalv = -normalv;
+        }
+
+        Computations {
+            t: self.t,
+            object: self.object,
+            point: world_point,
+            eyev,
+            normalv,
+            inside,
+        }
+    }
 }
 
 pub fn hit<'a, T: Object + Debug + PartialEq>(
@@ -26,12 +63,18 @@ pub fn hit<'a, T: Object + Debug + PartialEq>(
 
 #[cfg(test)]
 mod tests {
+    use tuples::vector;
+
     use crate::*;
 
     #[derive(Debug, PartialEq)]
     struct Sphere {}
 
-    impl Object for Sphere {}
+    impl Object for Sphere {
+        fn normal_at(&self, _world_point: &Tuple) -> Tuple {
+            vector(0.0, 0.0, 0.0)
+        }
+    }
 
     #[test]
     fn intersection_encapsulates_t_and_object() {

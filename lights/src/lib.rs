@@ -1,6 +1,7 @@
 use colors::Color;
 use tuples::Tuple;
 
+#[derive(Debug, PartialEq)]
 pub struct PointLight {
     pub position: Tuple,
     pub intensity: Color,

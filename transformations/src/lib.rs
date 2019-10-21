@@ -1,4 +1,5 @@
 use matrices::{matrix_multiply, IDENTITY};
+use tuples::{cross, normalize, Tuple};
 
 pub trait MatrixTransformations {
     fn translate(self, x: f64, y: f64, z: f64) -> Self;
@@ -65,12 +66,27 @@ impl MatrixTransformations for [[f64; 4]; 4] {
     }
 }
 
+pub fn view_transform(from: &Tuple, to: &Tuple, up: &Tuple) -> [[f64; 4]; 4] {
+    let forward = normalize(&(*to - *from));
+    let upn = normalize(up);
+    let left = cross(&forward, &upn);
+    let true_up = cross(&left, &forward);
+    let orientation = [
+        [left.x, left.y, left.z, 0.0],
+        [true_up.x, true_up.y, true_up.z, 0.0],
+        [-forward.x, -forward.y, -forward.z, 0.0],
+        [0.0, 0.0, 0.0, 1.0],
+    ];
+    matrix_multiply(&orientation, &IDENTITY.translate(-from.x, -from.y, -from.z))
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::*;
     use core::f64::consts::PI;
-    use matrices::{inverse, matrix_tuple_multiply, IDENTITY};
+    use matrices::{approx_eq, inverse, matrix_tuple_multiply, IDENTITY};
     use tuples::{point, vector};
+
+    use crate::*;
 
     #[test]
     fn multiplying_by_a_translation_matrix() {
@@ -249,5 +265,49 @@ mod tests {
             .scale(5.0, 5.0, 5.0)
             .translate(10.0, 5.0, 7.0);
         assert_eq!(matrix_tuple_multiply(&t, &p), point(15.0, 0.0, 7.0));
+    }
+
+    #[test]
+    fn view_transformation_matrix_for_the_default_orientation() {
+        let from = point(0.0, 0.0, 0.0);
+        let to = point(0.0, 0.0, -1.0);
+        let up = vector(0.0, 1.0, 0.0);
+        let t = view_transform(&from, &to, &up);
+        assert_eq!(t, IDENTITY);
+    }
+
+    #[test]
+    fn view_transformation_matrix_looking_in_positive_z_direction() {
+        let from = point(0.0, 0.0, 0.0);
+        let to = point(0.0, 0.0, 1.0);
+        let up = vector(0.0, 1.0, 0.0);
+        let t = view_transform(&from, &to, &up);
+        assert_eq!(t, IDENTITY.scale(-1.0, 1.0, -1.0));
+    }
+
+    #[test]
+    fn view_transformation_matrix_moves_the_world() {
+        let from = point(0.0, 0.0, 8.0);
+        let to = point(0.0, 0.0, 0.0);
+        let up = vector(0.0, 1.0, 0.0);
+        let t = view_transform(&from, &to, &up);
+        assert_eq!(t, IDENTITY.translate(0.0, 0.0, -8.0));
+    }
+
+    #[test]
+    fn an_arbitrary_view_transformation() {
+        let from = point(1.0, 3.0, 2.0);
+        let to = point(4.0, -2.0, 8.0);
+        let up = vector(1.0, 1.0, 0.0);
+        let t = view_transform(&from, &to, &up);
+        assert!(approx_eq(
+            &t,
+            &[
+                [-0.50709, 0.50709, 0.67612, -2.36643],
+                [0.76772, 0.60609, 0.12122, -2.82843],
+                [-0.35857, 0.59761, -0.71714, 0.00000],
+                [0.00000, 0.00000, 0.00000, 1.00000]
+            ]
+        ));
     }
 }

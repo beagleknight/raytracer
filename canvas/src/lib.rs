@@ -8,6 +8,20 @@ pub struct Canvas {
     pub pixels: Vec<Color>,
 }
 
+impl Canvas {
+    pub fn new(width: i32, height: i32) -> Canvas {
+        canvas(width, height)
+    }
+
+    pub fn write_pixel(&mut self, x: usize, y: usize, color: Color) {
+        write_pixel(self, x, y, color);
+    }
+
+    pub fn pixel_at(&self, x: usize, y: usize) -> Option<&Color> {
+        pixel_at(self, x, y)
+    }
+}
+
 pub fn canvas(width: i32, height: i32) -> Canvas {
     Canvas {
         width,
