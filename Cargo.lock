@@ -89,6 +89,7 @@ version = "0.1.0"
 dependencies = [
  "canvas 0.1.0",
  "colors 0.1.0",
+ "intersections 0.1.0",
  "lights 0.1.0",
  "matrices 0.1.0",
  "rays 0.1.0",
