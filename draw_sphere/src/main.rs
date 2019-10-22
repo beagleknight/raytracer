@@ -1,13 +1,11 @@
-use std::fs::File;
-use std::io::prelude::*;
-
 use canvas::{canvas, canvas_to_ppm, write_pixel};
 use colors::color;
-use intersections::Object;
 use lights::PointLight;
 use rays::Ray;
-use spheres::Sphere;
+use std::fs::File;
+use std::io::prelude::*;
 use tuples::{normalize, point};
+use world::{object::Object, spheres::Sphere};
 
 fn main() -> std::io::Result<()> {
     let canvas_size = 500;
@@ -16,9 +14,8 @@ fn main() -> std::io::Result<()> {
         intensity: color(1.0, 1.0, 1.0),
     };
     let mut c = canvas(canvas_size, canvas_size);
-    let mut s = Sphere::new();
+    let mut s = Object::new(Box::new(Sphere::default()));
     s.material.color = color(0.443, 0.502, 0.725);
-    // s.transform(&IDENTITY.scale(0.5, 0.25, 1.0));
     let ray_origin = point(0.0, 0.0, -5.0);
     let wall_z = 10.0;
     let wall_size = 7.0;

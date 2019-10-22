@@ -10,7 +10,6 @@ edition = "2018"
 canvas = { path = "../canvas" }
 colors = { path = "../colors" }
 tuples = { path = "../tuples" }
-spheres = { path = "../spheres" }
 rays = { path = "../rays" }
 matrices = { path = "../matrices" }
 transformations = { path = "../transformations" }

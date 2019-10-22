@@ -1,15 +1,21 @@
+pub mod intersections;
+pub mod object;
+pub mod shape;
+pub mod spheres;
+
+use crate::intersections::{hit, Computations, Intersection};
+use crate::object::Object;
+use crate::spheres::Sphere;
 use colors::{color, Color};
-use intersections::{hit, Computations, Intersection};
 use lights::PointLight;
 use matrices::IDENTITY;
 use rays::Ray;
-use spheres::Sphere;
 use transformations::MatrixTransformations;
 use tuples::{magnitude, normalize, point, Tuple};
 
 pub struct World {
     pub light_source: Option<PointLight>,
-    pub objects: Vec<Sphere>,
+    pub objects: Vec<Object>,
 }
 
 impl World {
@@ -20,7 +26,7 @@ impl World {
         }
     }
 
-    pub fn intersect(&self, ray: &Ray) -> Vec<Intersection<Sphere>> {
+    pub fn intersect(&self, ray: &Ray) -> Vec<Intersection> {
         let mut result = vec![];
         for object in self.objects.iter() {
             if let Some(intersections) = object.intersect(ray) {
@@ -33,7 +39,7 @@ impl World {
         result
     }
 
-    pub fn shade_hit(&self, comps: &Computations<Sphere>) -> Color {
+    pub fn shade_hit(&self, comps: &Computations) -> Color {
         comps.object.material.lightning(
             &self.light_source.as_ref().unwrap(),
             &comps.point,
@@ -80,30 +86,33 @@ impl Default for World {
             position: point(-10.0, 10.0, -10.0),
             intensity: color(1.0, 1.0, 1.0),
         };
-        let mut s1 = Sphere::new();
-        s1.material.color = color(0.8, 1.0, 0.6);
-        s1.material.diffuse = 0.7;
-        s1.material.specular = 0.2;
-        let mut s2 = Sphere::new();
-        s2.transform = IDENTITY.scale(0.5, 0.5, 0.5);
+        let s1 = Sphere::default();
+        let mut o1 = Object::new(Box::new(s1));
+        o1.material.color = color(0.8, 1.0, 0.6);
+        o1.material.diffuse = 0.7;
+        o1.material.specular = 0.2;
+        let s2 = Sphere::default();
+        let mut o2 = Object::new(Box::new(s2));
+        o2.transform = IDENTITY.scale(0.5, 0.5, 0.5);
         World {
             light_source: Some(light),
-            objects: vec![s1, s2],
+            objects: vec![o1, o2],
         }
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::intersections::Intersection;
+    use crate::object::Object;
+    use crate::spheres::Sphere;
+    use crate::World;
     use colors::color;
     use lights::PointLight;
     use matrices::IDENTITY;
     use rays::Ray;
-    use spheres::Sphere;
     use transformations::MatrixTransformations;
     use tuples::{point, vector};
-
-    use crate::*;
 
     #[test]
     fn creating_a_world() {
@@ -119,15 +128,11 @@ mod tests {
             position: point(-10.0, 10.0, -10.0),
             intensity: color(1.0, 1.0, 1.0),
         };
-        let mut s1 = Sphere::new();
-        s1.material.color = color(0.8, 1.0, 0.6);
-        s1.material.diffuse = 0.7;
-        s1.material.specular = 0.2;
-        let mut s2 = Sphere::new();
-        s2.transform = IDENTITY.scale(0.5, 0.5, 0.5);
         assert_eq!(w.light_source, Some(light));
-        assert!(w.objects.contains(&s1));
-        assert!(w.objects.contains(&s2));
+        assert_eq!(w.objects[0].material.color, color(0.8, 1.0, 0.6));
+        assert_eq!(w.objects[0].material.diffuse, 0.7);
+        assert_eq!(w.objects[0].material.specular, 0.2);
+        assert_eq!(w.objects[1].transform, IDENTITY.scale(0.5, 0.5, 0.5));
     }
 
     #[test]
@@ -151,11 +156,8 @@ mod tests {
             origin: point(0.0, 0.0, -5.0),
             direction: vector(0.0, 0.0, 1.0),
         };
-        let shape = &w.objects[0];
-        let i = Intersection {
-            t: 4.0,
-            object: shape,
-        };
+        let object = &w.objects[0];
+        let i = Intersection { t: 4.0, object };
         let comps = i.prepare_computations(&r);
         let c = w.shade_hit(&comps);
         assert_eq!(c, color(0.38066, 0.47583, 0.2855));
@@ -232,14 +234,14 @@ mod tests {
             position: point(0.0, 0.0, -10.0),
             intensity: color(1.0, 1.0, 1.0),
         });
-        let s1 = Sphere::new();
-        let mut s2 = Sphere::new();
-        s2.transform = IDENTITY.translate(0.0, 0.0, 10.0);
+        let o1 = Object::new(Box::new(Sphere::default()));
+        let mut o2 = Object::new(Box::new(Sphere::default()));
+        o2.transform = IDENTITY.translate(0.0, 0.0, 10.0);
         let r = Ray {
             origin: point(0.0, 0.0, 5.0),
             direction: vector(0.0, 0.0, 1.0),
         };
-        w.objects = vec![s1, s2];
+        w.objects = vec![o1, o2];
         let i = Intersection {
             t: 4.0,
             object: &w.objects[1],

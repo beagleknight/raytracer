@@ -1,51 +1,49 @@
-use core::f64::consts::PI;
-use std::fs::File;
-use std::io::prelude::*;
-
 use camera::Camera;
 use canvas::canvas_to_ppm;
 use colors::color;
+use core::f64::consts::PI;
 use lights::PointLight;
 use materials::Material;
 use matrices::IDENTITY;
-use spheres::Sphere;
+use std::fs::File;
+use std::io::prelude::*;
 use transformations::{view_transform, MatrixTransformations};
 use tuples::{point, vector};
-use world::World;
+use world::{object::Object, spheres::Sphere, World};
 
 fn main() -> std::io::Result<()> {
-    let mut floor = Sphere::new();
+    let mut floor = Object::new(Box::new(Sphere::default()));
     floor.transform = IDENTITY.scale(10.0, 0.01, 10.0);
     floor.material = Material::default();
     floor.material.color = color(1.0, 0.9, 0.9);
     floor.material.specular = 0.0;
-    let mut left_wall = Sphere::new();
+    let mut left_wall = Object::new(Box::new(Sphere::default()));
     left_wall.transform = IDENTITY
         .scale(10.0, 0.01, 10.0)
         .rotate_x(PI / 2.0)
         .rotate_y(-PI / 4.0)
         .translate(0.0, 0.0, 5.0);
     left_wall.material = floor.material;
-    let mut right_wall = Sphere::new();
+    let mut right_wall = Object::new(Box::new(Sphere::default()));
     right_wall.transform = IDENTITY
         .scale(10.0, 0.01, 10.0)
         .rotate_x(PI / 2.0)
         .rotate_y(PI / 4.0)
         .translate(0.0, 0.0, 5.0);
     right_wall.material = floor.material;
-    let mut middle = Sphere::new();
+    let mut middle = Object::new(Box::new(Sphere::default()));
     middle.transform = IDENTITY.translate(-0.5, 1.0, 0.5);
     middle.material = Material::default();
     middle.material.color = color(0.1, 1.0, 0.5);
     middle.material.diffuse = 0.7;
     middle.material.specular = 0.3;
-    let mut right = Sphere::new();
+    let mut right = Object::new(Box::new(Sphere::default()));
     right.transform = IDENTITY.scale(0.5, 0.5, 0.5).translate(1.5, 0.5, -0.5);
     right.material = Material::default();
     right.material.color = color(0.5, 1.0, 0.1);
     right.material.diffuse = 0.7;
     right.material.specular = 0.3;
-    let mut left = Sphere::new();
+    let mut left = Object::new(Box::new(Sphere::default()));
     left.transform = IDENTITY
         .scale(0.33, 0.33, 0.33)
         .translate(-1.5, 0.33, -0.75);

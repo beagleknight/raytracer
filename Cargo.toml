@@ -7,14 +7,13 @@ members = [
   "matrices",
   "transformations",
   "rays",
-  "spheres",
-  "intersections",
   "lights",
   "materials",
   "world",
   "camera",
+  "shapes",
   "cannon",
   "clock",
   "draw_sphere",
-  "draw_scene",
+  "draw_scene"
 ]
