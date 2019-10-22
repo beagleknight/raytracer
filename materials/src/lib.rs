@@ -18,6 +18,7 @@ impl Material {
         point: &Tuple,
         eyev: &Tuple,
         normalv: &Tuple,
+        in_shadow: bool,
     ) -> Color {
         let effective_color = self.color * light.intensity;
         let lightv = normalize(&(light.position - *point));
@@ -35,6 +36,9 @@ impl Material {
                 let factor = reflect_dot_eye.powf(self.shininess);
                 specular = light.intensity * self.specular * factor;
             }
+        }
+        if in_shadow {
+            return ambient;
         }
         ambient + diffuse + specular
     }
@@ -78,7 +82,7 @@ mod tests {
             position: point(0.0, 0.0, -10.0),
             intensity: color(1.0, 1.0, 1.0),
         };
-        let result = m.lightning(&light, &position, &eyev, &normalv);
+        let result = m.lightning(&light, &position, &eyev, &normalv, false);
         assert_eq!(result, color(1.9, 1.9, 1.9));
     }
 
@@ -92,7 +96,7 @@ mod tests {
             position: point(0.0, 0.0, -10.0),
             intensity: color(1.0, 1.0, 1.0),
         };
-        let result = m.lightning(&light, &position, &eyev, &normalv);
+        let result = m.lightning(&light, &position, &eyev, &normalv, false);
         assert_eq!(result, color(1.0, 1.0, 1.0));
     }
 
@@ -106,7 +110,7 @@ mod tests {
             position: point(0.0, 10.0, -10.0),
             intensity: color(1.0, 1.0, 1.0),
         };
-        let result = m.lightning(&light, &position, &eyev, &normalv);
+        let result = m.lightning(&light, &position, &eyev, &normalv, false);
         assert_eq!(result, color(0.7364, 0.7364, 0.7364));
     }
 
@@ -120,7 +124,7 @@ mod tests {
             position: point(0.0, 10.0, -10.0),
             intensity: color(1.0, 1.0, 1.0),
         };
-        let result = m.lightning(&light, &position, &eyev, &normalv);
+        let result = m.lightning(&light, &position, &eyev, &normalv, false);
         assert_eq!(result, color(1.6364, 1.6364, 1.6364));
     }
 
@@ -134,7 +138,21 @@ mod tests {
             position: point(0.0, 0.0, 10.0),
             intensity: color(1.0, 1.0, 1.0),
         };
-        let result = m.lightning(&light, &position, &eyev, &normalv);
+        let result = m.lightning(&light, &position, &eyev, &normalv, false);
+        assert_eq!(result, color(0.1, 0.1, 0.1));
+    }
+
+    #[test]
+    fn lightning_with_the_surface_in_shadow() {
+        let m = Material::default();
+        let position = point(0.0, 0.0, 0.0);
+        let eyev = vector(0.0, 0.0, -1.0);
+        let normalv = vector(0.0, 0.0, -1.0);
+        let light = PointLight {
+            position: point(0.0, 0.0, -10.0),
+            intensity: color(1.0, 1.0, 1.0),
+        };
+        let result = m.lightning(&light, &position, &eyev, &normalv, true);
         assert_eq!(result, color(0.1, 0.1, 0.1));
     }
 }

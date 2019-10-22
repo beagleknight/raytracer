@@ -323,4 +323,21 @@ mod tests {
         assert_eq!(comps.normalv, vector(0.0, 0.0, -1.0));
         assert!(comps.inside);
     }
+
+    #[test]
+    fn hit_should_offset_the_point() {
+        let r = Ray {
+            origin: point(0.0, 0.0, -5.0),
+            direction: vector(0.0, 0.0, 1.0),
+        };
+        let mut shape = Sphere::new();
+        shape.transform = IDENTITY.translate(0.0, 0.0, 1.0);
+        let i = Intersection {
+            t: 5.0,
+            object: &shape,
+        };
+        let comps = i.prepare_computations(&r);
+        assert!(comps.over_point.z < -0.00001 / 2.0);
+        assert!(comps.point.z > comps.over_point.z);
+    }
 }

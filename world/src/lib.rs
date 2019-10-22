@@ -5,7 +5,7 @@ use matrices::IDENTITY;
 use rays::Ray;
 use spheres::Sphere;
 use transformations::MatrixTransformations;
-use tuples::point;
+use tuples::{magnitude, normalize, point, Tuple};
 
 pub struct World {
     pub light_source: Option<PointLight>,
@@ -39,6 +39,7 @@ impl World {
             &comps.point,
             &comps.eyev,
             &comps.normalv,
+            self.is_shadowed(&comps.over_point),
         )
     }
 
@@ -51,6 +52,24 @@ impl World {
                 self.shade_hit(&comps)
             }
             None => color(0.0, 0.0, 0.0),
+        }
+    }
+
+    pub fn is_shadowed(&self, point: &Tuple) -> bool {
+        let v = self.light_source.as_ref().unwrap().position - *point;
+        let distance = magnitude(&v);
+        let direction = normalize(&v);
+
+        let ray = Ray {
+            origin: *point,
+            direction,
+        };
+
+        let intersections = self.intersect(&ray);
+
+        match hit(&intersections) {
+            Some(intersection) => intersection.t < distance,
+            None => false,
         }
     }
 }
@@ -176,5 +195,57 @@ mod tests {
         };
         let c = w.color_at(&r);
         assert_eq!(c, inner.material.color);
+    }
+
+    #[test]
+    fn no_shadow_when_nothing_is_collinear_with_point_and_light() {
+        let w = World::default();
+        let p = point(0.0, 10.0, 0.0);
+        assert!(!w.is_shadowed(&p));
+    }
+
+    #[test]
+    fn shadow_when_an_object_is_between_the_point_and_the_light() {
+        let w = World::default();
+        let p = point(10.0, -10.0, 10.0);
+        assert!(w.is_shadowed(&p));
+    }
+
+    #[test]
+    fn no_shadow_when_an_object_is_behind_the_light() {
+        let w = World::default();
+        let p = point(-20.0, 20.0, -20.0);
+        assert!(!w.is_shadowed(&p));
+    }
+
+    #[test]
+    fn no_shadow_when_an_object_is_behind_the_point() {
+        let w = World::default();
+        let p = point(-2.0, 2.0, -2.0);
+        assert!(!w.is_shadowed(&p));
+    }
+
+    #[test]
+    fn shade_hit_is_given_an_intersection_in_shadow() {
+        let mut w = World::new();
+        w.light_source = Some(PointLight {
+            position: point(0.0, 0.0, -10.0),
+            intensity: color(1.0, 1.0, 1.0),
+        });
+        let s1 = Sphere::new();
+        let mut s2 = Sphere::new();
+        s2.transform = IDENTITY.translate(0.0, 0.0, 10.0);
+        let r = Ray {
+            origin: point(0.0, 0.0, 5.0),
+            direction: vector(0.0, 0.0, 1.0),
+        };
+        w.objects = vec![s1, s2];
+        let i = Intersection {
+            t: 4.0,
+            object: &w.objects[1],
+        };
+        let comps = i.prepare_computations(&r);
+        let c = w.shade_hit(&comps);
+        assert_eq!(c, color(0.1, 0.1, 0.1));
     }
 }

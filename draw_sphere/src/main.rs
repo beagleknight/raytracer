@@ -43,7 +43,7 @@ fn main() -> std::io::Result<()> {
                 let color = intersection[0]
                     .object
                     .material
-                    .lightning(&light, &point, &eye, &normal);
+                    .lightning(&light, &point, &eye, &normal, false);
                 write_pixel(&mut c, x as usize, y as usize, color);
             }
         }
