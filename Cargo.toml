@@ -15,5 +15,6 @@ members = [
   "camera",
   "cannon",
   "clock",
-  "draw_sphere"
+  "draw_sphere",
+  "draw_scene",
 ]

@@ -67,6 +67,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "draw_scene"
+version = "0.1.0"
+dependencies = [
+ "camera 0.1.0",
+ "canvas 0.1.0",
+ "colors 0.1.0",
+ "lights 0.1.0",
+ "materials 0.1.0",
+ "matrices 0.1.0",
+ "rays 0.1.0",
+ "spheres 0.1.0",
+ "transformations 0.1.0",
+ "tuples 0.1.0",
+ "world 0.1.0",
+]
+
+[[package]]
 name = "draw_sphere"
 version = "0.1.0"
 dependencies = [

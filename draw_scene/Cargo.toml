@@ -1,0 +1,20 @@
+[package]
+name = "draw_scene"
+version = "0.1.0"
+authors = ["David Morcillo <david.morcillo@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+canvas = { path = "../canvas" }
+colors = { path = "../colors" }
+tuples = { path = "../tuples" }
+spheres = { path = "../spheres" }
+rays = { path = "../rays" }
+matrices = { path = "../matrices" }
+transformations = { path = "../transformations" }
+lights = { path = "../lights" }
+materials = { path = "../materials" }
+world = { path = "../world" }
+camera = { path = "../camera" }
