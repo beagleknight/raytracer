@@ -3,13 +3,14 @@ use crate::materials::Material;
 use crate::shape::Shape;
 use matrices::{inverse, matrix_tuple_multiply, transpose, IDENTITY};
 use rays::Ray;
+use std::rc::Rc;
 use tuples::{normalize, Tuple};
 use uuid::Uuid;
 
 pub struct Object {
     pub id: Uuid,
     pub transform: [[f64; 4]; 4],
-    pub material: Material,
+    pub material: Rc<Material>,
     pub shape: Box<dyn Shape>,
 }
 
@@ -47,7 +48,7 @@ impl Object {
         Object {
             id: Uuid::new_v4(),
             transform: IDENTITY,
-            material: Material::default(),
+            material: Rc::new(Material::default()),
             shape,
         }
     }
@@ -73,6 +74,7 @@ mod tests {
     use matrices::IDENTITY;
     use rays::Ray;
     use std::f64::consts::PI;
+    use std::rc::Rc;
     use transformations::MatrixTransformations;
     use tuples::{point, vector};
 
@@ -96,7 +98,12 @@ mod tests {
         let shape = TestShape::default();
         let o = Object::new(Box::new(shape));
         let m = Material::default();
-        assert_eq!(o.material, m);
+        assert_eq!((*o.material).color, m.color);
+        assert_eq!((*o.material).ambient, m.ambient);
+        assert_eq!((*o.material).diffuse, m.diffuse);
+        assert_eq!((*o.material).specular, m.specular);
+        assert_eq!((*o.material).shininess, m.shininess);
+        assert!((*o.material).pattern.is_none());
     }
 
     #[test]
@@ -105,7 +112,8 @@ mod tests {
         let mut o = Object::new(Box::new(shape));
         let mut m = Material::default();
         m.diffuse = 1.0;
-        o.material = m;
+        let m = Rc::new(m);
+        o.material = Rc::clone(&m);
         assert_eq!(o.material, m);
     }
 

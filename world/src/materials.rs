@@ -1,10 +1,11 @@
 use crate::{object::Object, patterns::Pattern};
-use colors::{color, Color};
+use colors::Color;
 use lights::PointLight;
 use tuples::{dot, normalize, reflect, Tuple};
+use uuid::Uuid;
 
-#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Material {
+    pub id: Uuid,
     pub color: Color,
     pub ambient: f64,
     pub diffuse: f64,
@@ -23,16 +24,16 @@ impl Material {
         normalv: &Tuple,
         in_shadow: bool,
     ) -> Color {
-        let base_color = match self.pattern {
-            Some(pattern) => pattern.stripe_at_object(&object, &point),
+        let base_color = match &self.pattern {
+            Some(pattern) => pattern.pattern_at_object(&object, &point),
             None => self.color,
         };
         let effective_color = base_color * light.intensity;
         let lightv = normalize(&(light.position - *point));
         let ambient = effective_color * self.ambient;
         let light_dot_normal = dot(&lightv, normalv);
-        let mut diffuse = color(0.0, 0.0, 0.0);
-        let mut specular = color(0.0, 0.0, 0.0);
+        let mut diffuse = Color::new(0.0, 0.0, 0.0);
+        let mut specular = Color::new(0.0, 0.0, 0.0);
         if light_dot_normal > 0.0 {
             diffuse = effective_color * self.diffuse * light_dot_normal;
 
@@ -54,7 +55,8 @@ impl Material {
 impl Default for Material {
     fn default() -> Self {
         Material {
-            color: color(1.0, 1.0, 1.0),
+            id: Uuid::new_v4(),
+            color: Color::new(1.0, 1.0, 1.0),
             ambient: 0.1,
             diffuse: 0.9,
             specular: 0.9,
@@ -64,17 +66,34 @@ impl Default for Material {
     }
 }
 
+impl PartialEq for Material {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
+}
+
+impl std::fmt::Debug for Material {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
+        write!(f, "Material {}", self.id)
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::{materials::Material, object::Object, patterns::Pattern, spheres::Sphere};
-    use colors::color;
+    use crate::{
+        materials::Material,
+        object::Object,
+        patterns::{stripes::StripesPatternShape, Pattern},
+        spheres::Sphere,
+    };
+    use colors::Color;
     use lights::PointLight;
     use tuples::{point, vector};
 
     #[test]
     fn default_material() {
         let m = Material::default();
-        assert_eq!(m.color, color(1.0, 1.0, 1.0));
+        assert_eq!(m.color, Color::new(1.0, 1.0, 1.0));
         assert_eq!(m.ambient, 0.1);
         assert_eq!(m.diffuse, 0.9);
         assert_eq!(m.specular, 0.9);
@@ -90,10 +109,10 @@ mod tests {
         let normalv = vector(0.0, 0.0, -1.0);
         let light = PointLight {
             position: point(0.0, 0.0, -10.0),
-            intensity: color(1.0, 1.0, 1.0),
+            intensity: Color::new(1.0, 1.0, 1.0),
         };
         let result = m.lightning(&object, &light, &position, &eyev, &normalv, false);
-        assert_eq!(result, color(1.9, 1.9, 1.9));
+        assert_eq!(result, Color::new(1.9, 1.9, 1.9));
     }
 
     #[test]
@@ -105,10 +124,10 @@ mod tests {
         let normalv = vector(0.0, 0.0, -1.0);
         let light = PointLight {
             position: point(0.0, 0.0, -10.0),
-            intensity: color(1.0, 1.0, 1.0),
+            intensity: Color::new(1.0, 1.0, 1.0),
         };
         let result = m.lightning(&object, &light, &position, &eyev, &normalv, false);
-        assert_eq!(result, color(1.0, 1.0, 1.0));
+        assert_eq!(result, Color::new(1.0, 1.0, 1.0));
     }
 
     #[test]
@@ -120,10 +139,10 @@ mod tests {
         let normalv = vector(0.0, 0.0, -1.0);
         let light = PointLight {
             position: point(0.0, 10.0, -10.0),
-            intensity: color(1.0, 1.0, 1.0),
+            intensity: Color::new(1.0, 1.0, 1.0),
         };
         let result = m.lightning(&object, &light, &position, &eyev, &normalv, false);
-        assert_eq!(result, color(0.7364, 0.7364, 0.7364));
+        assert_eq!(result, Color::new(0.7364, 0.7364, 0.7364));
     }
 
     #[test]
@@ -135,10 +154,10 @@ mod tests {
         let normalv = vector(0.0, 0.0, -1.0);
         let light = PointLight {
             position: point(0.0, 10.0, -10.0),
-            intensity: color(1.0, 1.0, 1.0),
+            intensity: Color::new(1.0, 1.0, 1.0),
         };
         let result = m.lightning(&object, &light, &position, &eyev, &normalv, false);
-        assert_eq!(result, color(1.6364, 1.6364, 1.6364));
+        assert_eq!(result, Color::new(1.6364, 1.6364, 1.6364));
     }
 
     #[test]
@@ -150,10 +169,10 @@ mod tests {
         let normalv = vector(0.0, 0.0, -1.0);
         let light = PointLight {
             position: point(0.0, 0.0, 10.0),
-            intensity: color(1.0, 1.0, 1.0),
+            intensity: Color::new(1.0, 1.0, 1.0),
         };
         let result = m.lightning(&object, &light, &position, &eyev, &normalv, false);
-        assert_eq!(result, color(0.1, 0.1, 0.1));
+        assert_eq!(result, Color::new(0.1, 0.1, 0.1));
     }
 
     #[test]
@@ -165,23 +184,26 @@ mod tests {
         let normalv = vector(0.0, 0.0, -1.0);
         let light = PointLight {
             position: point(0.0, 0.0, -10.0),
-            intensity: color(1.0, 1.0, 1.0),
+            intensity: Color::new(1.0, 1.0, 1.0),
         };
         let result = m.lightning(&object, &light, &position, &eyev, &normalv, true);
-        assert_eq!(result, color(0.1, 0.1, 0.1));
+        assert_eq!(result, Color::new(0.1, 0.1, 0.1));
     }
 
     #[test]
     fn lightning_with_a_pattern_applied() {
         let object = Object::new(Box::new(Sphere::default()));
         let mut m = Material::default();
-        m.pattern = Some(Pattern::new(color(1.0, 1.0, 1.0), color(0.0, 0.0, 0.0)));
+        m.pattern = Some(Pattern::new(Box::new(StripesPatternShape {
+            a: Color::new(1.0, 1.0, 1.0),
+            b: Color::new(0.0, 0.0, 0.0),
+        })));
         m.ambient = 1.0;
         m.diffuse = 0.0;
         m.specular = 0.0;
         let eyev = vector(0.0, 0.0, -1.0);
         let normalv = vector(0.0, 0.0, -1.0);
-        let light = PointLight::new(point(0.0, 0.0, -10.0), color(1.0, 1.0, 1.0));
+        let light = PointLight::new(point(0.0, 0.0, -10.0), Color::new(1.0, 1.0, 1.0));
         let c1 = m.lightning(
             &object,
             &light,
@@ -198,7 +220,7 @@ mod tests {
             &normalv,
             false,
         );
-        assert_eq!(c1, color(1.0, 1.0, 1.0));
-        assert_eq!(c2, color(0.0, 0.0, 0.0));
+        assert_eq!(c1, Color::new(1.0, 1.0, 1.0));
+        assert_eq!(c2, Color::new(0.0, 0.0, 0.0));
     }
 }

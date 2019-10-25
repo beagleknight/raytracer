@@ -71,7 +71,7 @@ impl Camera {
 #[cfg(test)]
 mod tests {
     use crate::{camera::Camera, World};
-    use colors::color;
+    use colors::Color;
     use core::f64::consts::PI;
     use float_cmp::ApproxEq;
     use matrices::IDENTITY;
@@ -141,7 +141,7 @@ mod tests {
         let image = c.render(&w);
         assert_eq!(
             *image.pixel_at(5, 5).unwrap(),
-            color(0.38066, 0.47583, 0.2855)
+            Color::new(0.38066, 0.47583, 0.2855)
         );
     }
 }

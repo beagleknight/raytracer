@@ -1,21 +1,24 @@
 use canvas::{canvas, canvas_to_ppm, write_pixel};
-use colors::color;
+use colors::Color;
 use lights::PointLight;
 use rays::Ray;
 use std::fs::File;
 use std::io::prelude::*;
+use std::rc::Rc;
 use tuples::{normalize, point};
-use world::{object::Object, spheres::Sphere};
+use world::{materials::Material, object::Object, spheres::Sphere};
 
 fn main() -> std::io::Result<()> {
     let canvas_size = 500;
     let light = PointLight {
         position: point(-10.0, 10.0, -10.0),
-        intensity: color(1.0, 1.0, 1.0),
+        intensity: Color::new(1.0, 1.0, 1.0),
     };
     let mut c = canvas(canvas_size, canvas_size);
     let mut s = Object::new(Box::new(Sphere::default()));
-    s.material.color = color(0.443, 0.502, 0.725);
+    let mut material = Material::default();
+    material.color = Color::new(0.443, 0.502, 0.725);
+    s.material = Rc::new(material);
     let ray_origin = point(0.0, 0.0, -5.0);
     let wall_z = 10.0;
     let wall_size = 7.0;

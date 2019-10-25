@@ -8,12 +8,14 @@ pub mod shape;
 pub mod spheres;
 
 use crate::intersections::{hit, Computations, Intersection};
+use crate::materials::Material;
 use crate::object::Object;
 use crate::spheres::Sphere;
-use colors::{color, Color};
+use colors::Color;
 use lights::PointLight;
 use matrices::IDENTITY;
 use rays::Ray;
+use std::rc::Rc;
 use transformations::MatrixTransformations;
 use tuples::{magnitude, normalize, point, Tuple};
 
@@ -62,7 +64,7 @@ impl World {
                 let comps = intersection.prepare_computations(ray);
                 self.shade_hit(&comps)
             }
-            None => color(0.0, 0.0, 0.0),
+            None => Color::new(0.0, 0.0, 0.0),
         }
     }
 
@@ -89,13 +91,15 @@ impl Default for World {
     fn default() -> World {
         let light = PointLight {
             position: point(-10.0, 10.0, -10.0),
-            intensity: color(1.0, 1.0, 1.0),
+            intensity: Color::new(1.0, 1.0, 1.0),
         };
         let s1 = Sphere::default();
         let mut o1 = Object::new(Box::new(s1));
-        o1.material.color = color(0.8, 1.0, 0.6);
-        o1.material.diffuse = 0.7;
-        o1.material.specular = 0.2;
+        let mut material = Material::default();
+        material.color = Color::new(0.8, 1.0, 0.6);
+        material.diffuse = 0.7;
+        material.specular = 0.2;
+        o1.material = Rc::new(material);
         let s2 = Sphere::default();
         let mut o2 = Object::new(Box::new(s2));
         o2.transform = IDENTITY.scale(0.5, 0.5, 0.5);
@@ -109,13 +113,15 @@ impl Default for World {
 #[cfg(test)]
 mod tests {
     use crate::intersections::Intersection;
+    use crate::materials::Material;
     use crate::object::Object;
     use crate::spheres::Sphere;
     use crate::World;
-    use colors::color;
+    use colors::Color;
     use lights::PointLight;
     use matrices::IDENTITY;
     use rays::Ray;
+    use std::rc::Rc;
     use transformations::MatrixTransformations;
     use tuples::{point, vector};
 
@@ -131,10 +137,10 @@ mod tests {
         let w = World::default();
         let light = PointLight {
             position: point(-10.0, 10.0, -10.0),
-            intensity: color(1.0, 1.0, 1.0),
+            intensity: Color::new(1.0, 1.0, 1.0),
         };
         assert_eq!(w.light_source, Some(light));
-        assert_eq!(w.objects[0].material.color, color(0.8, 1.0, 0.6));
+        assert_eq!(w.objects[0].material.color, Color::new(0.8, 1.0, 0.6));
         assert_eq!(w.objects[0].material.diffuse, 0.7);
         assert_eq!(w.objects[0].material.specular, 0.2);
         assert_eq!(w.objects[1].transform, IDENTITY.scale(0.5, 0.5, 0.5));
@@ -165,7 +171,7 @@ mod tests {
         let i = Intersection { t: 4.0, object };
         let comps = i.prepare_computations(&r);
         let c = w.shade_hit(&comps);
-        assert_eq!(c, color(0.38066, 0.47583, 0.2855));
+        assert_eq!(c, Color::new(0.38066, 0.47583, 0.2855));
     }
 
     #[test]
@@ -176,7 +182,7 @@ mod tests {
             direction: vector(0.0, 1.0, 0.0),
         };
         let c = w.color_at(&r);
-        assert_eq!(c, color(0.0, 0.0, 0.0));
+        assert_eq!(c, Color::new(0.0, 0.0, 0.0));
     }
 
     #[test]
@@ -187,14 +193,17 @@ mod tests {
             direction: vector(0.0, 0.0, 1.0),
         };
         let c = w.color_at(&r);
-        assert_eq!(c, color(0.38066, 0.47583, 0.2855));
+        assert_eq!(c, Color::new(0.38066, 0.47583, 0.2855));
     }
 
     #[test]
     fn color_with_an_intersection_behind_the_ray() {
         let mut w = World::default();
-        w.objects[0].material.ambient = 1.0;
-        w.objects[1].material.ambient = 1.0;
+        let mut material = Material::default();
+        material.ambient = 1.0;
+        let material = Rc::new(material);
+        w.objects[0].material = Rc::clone(&material);
+        w.objects[1].material = Rc::clone(&material);
         let inner = &w.objects[1];
         let r = Ray {
             origin: point(0.0, 0.0, 0.75),
@@ -237,7 +246,7 @@ mod tests {
         let mut w = World::new();
         w.light_source = Some(PointLight {
             position: point(0.0, 0.0, -10.0),
-            intensity: color(1.0, 1.0, 1.0),
+            intensity: Color::new(1.0, 1.0, 1.0),
         });
         let o1 = Object::new(Box::new(Sphere::default()));
         let mut o2 = Object::new(Box::new(Sphere::default()));
@@ -253,6 +262,6 @@ mod tests {
         };
         let comps = i.prepare_computations(&r);
         let c = w.shade_hit(&comps);
-        assert_eq!(c, color(0.1, 0.1, 0.1));
+        assert_eq!(c, Color::new(0.1, 0.1, 0.1));
     }
 }

@@ -1,6 +1,6 @@
 use std::fmt::Write;
 
-use colors::{color, Color};
+use colors::Color;
 
 pub struct Canvas {
     pub width: i32,
@@ -26,7 +26,7 @@ pub fn canvas(width: i32, height: i32) -> Canvas {
     Canvas {
         width,
         height,
-        pixels: vec![color(0.0, 0.0, 0.0); (width * height) as usize],
+        pixels: vec![Color::new(0.0, 0.0, 0.0); (width * height) as usize],
     }
 }
 
@@ -92,14 +92,14 @@ mod tests {
         assert_eq!(c.height, 20);
         assert_eq!(c.pixels.len(), 200);
         for pixel in c.pixels {
-            assert_eq!(pixel, color(0.0, 0.0, 0.0));
+            assert_eq!(pixel, Color::new(0.0, 0.0, 0.0));
         }
     }
 
     #[test]
     fn writing_pixels_to_a_canvas() {
         let mut c = canvas(10, 20);
-        let red = color(1.0, 0.0, 0.0);
+        let red = Color::new(1.0, 0.0, 0.0);
         write_pixel(&mut c, 2, 3, red);
         assert_eq!(pixel_at(&c, 2, 3).unwrap(), &red);
     }
@@ -122,9 +122,9 @@ mod tests {
     #[test]
     fn constructing_the_ppm_pixel_data() {
         let mut c = canvas(5, 3);
-        let c1 = color(1.5, 0.0, 0.0);
-        let c2 = color(0.0, 0.5, 0.0);
-        let c3 = color(-0.5, 0.0, 1.0);
+        let c1 = Color::new(1.5, 0.0, 0.0);
+        let c2 = Color::new(0.0, 0.5, 0.0);
+        let c3 = Color::new(-0.5, 0.0, 1.0);
         write_pixel(&mut c, 0, 0, c1);
         write_pixel(&mut c, 2, 1, c2);
         write_pixel(&mut c, 4, 2, c3);
@@ -145,7 +145,7 @@ mod tests {
     fn splitting_long_lines_in_ppm_files() {
         let mut c = canvas(10, 2);
         for pixel in c.pixels.iter_mut() {
-            *pixel = color(1.0, 0.8, 0.6);
+            *pixel = Color::new(1.0, 0.8, 0.6);
         }
         let ppm = canvas_to_ppm(&c);
         assert_eq!(

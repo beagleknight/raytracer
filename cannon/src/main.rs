@@ -1,8 +1,7 @@
+use canvas::{canvas, canvas_to_ppm, write_pixel};
+use colors::Color;
 use std::fs::File;
 use std::io::prelude::*;
-
-use canvas::{canvas, canvas_to_ppm, write_pixel};
-use colors::color;
 use tuples::{normalize, point, vector, Tuple};
 
 struct Environment {
@@ -58,7 +57,7 @@ fn main() -> std::io::Result<()> {
             &mut c,
             projectile.position.x as usize,
             (canvas_height - projectile.position.y as i32) as usize,
-            color(0.5, 0.0, 0.5),
+            Color::new(0.5, 0.0, 0.5),
         );
         if projectile.position.y <= 0.0 {
             println!("Crashed at ticks equal to {}", ticks);

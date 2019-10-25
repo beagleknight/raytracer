@@ -1,10 +1,9 @@
+use canvas::{canvas, canvas_to_ppm, write_pixel};
+use colors::Color;
 use core::f64::consts::PI;
+use matrices::{matrix_tuple_multiply, IDENTITY};
 use std::fs::File;
 use std::io::prelude::*;
-
-use canvas::{canvas, canvas_to_ppm, write_pixel};
-use colors::color;
-use matrices::{matrix_tuple_multiply, IDENTITY};
 use transformations::MatrixTransformations;
 use tuples::point;
 
@@ -27,7 +26,7 @@ fn main() -> std::io::Result<()> {
             &mut c,
             point.x as usize,
             (canvas_size - point.y as i32) as usize,
-            color(1.0, 1.0, 1.0),
+            Color::new(1.0, 1.0, 1.0),
         );
     }
 
