@@ -7,6 +7,15 @@ pub struct PointLight {
     pub intensity: Color,
 }
 
+impl PointLight {
+    pub fn new(position: Tuple, intensity: Color) -> PointLight {
+        PointLight {
+            position,
+            intensity,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::*;

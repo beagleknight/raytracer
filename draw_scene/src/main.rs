@@ -1,15 +1,16 @@
-use camera::Camera;
 use canvas::canvas_to_ppm;
 use colors::color;
 use core::f64::consts::PI;
 use lights::PointLight;
-use materials::Material;
 use matrices::IDENTITY;
 use std::fs::File;
 use std::io::prelude::*;
 use transformations::{view_transform, MatrixTransformations};
 use tuples::{point, vector};
-use world::{object::Object, planes::Plane, spheres::Sphere, World};
+use world::{
+    camera::Camera, materials::Material, object::Object, patterns::Pattern, planes::Plane,
+    spheres::Sphere, World,
+};
 
 fn main() -> std::io::Result<()> {
     let canvas_width = 600;
@@ -19,12 +20,14 @@ fn main() -> std::io::Result<()> {
     floor.material = Material::default();
     floor.material.color = color(1.0, 0.9, 0.9);
     floor.material.specular = 0.0;
+    floor.material.pattern = Some(Pattern::new(color(1.0, 0.9, 0.9), color(0.3, 0.9, 0.9)));
     let mut middle = Object::new(Box::new(Sphere::default()));
     middle.transform = IDENTITY.translate(-0.5, 1.0, 0.5);
     middle.material = Material::default();
     middle.material.color = color(0.1, 1.0, 0.5);
     middle.material.diffuse = 0.7;
     middle.material.specular = 0.3;
+    middle.material.pattern = Some(Pattern::new(color(0.5, 1.0, 0.1), color(1.0, 0.5, 0.1)));
     let mut right = Object::new(Box::new(Sphere::default()));
     right.transform = IDENTITY.scale(0.5, 0.5, 0.5).translate(1.5, 0.5, -0.5);
     right.material = Material::default();

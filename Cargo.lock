@@ -11,20 +11,6 @@ version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
-name = "camera"
-version = "0.1.0"
-dependencies = [
- "canvas 0.1.0",
- "colors 0.1.0",
- "float-cmp 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "matrices 0.1.0",
- "rays 0.1.0",
- "transformations 0.1.0",
- "tuples 0.1.0",
- "world 0.1.0",
-]
-
-[[package]]
 name = "cannon"
 version = "0.1.0"
 dependencies = [
@@ -63,18 +49,16 @@ dependencies = [
 name = "colors"
 version = "0.1.0"
 dependencies = [
- "float-cmp 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "float-cmp 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "draw_scene"
 version = "0.1.0"
 dependencies = [
- "camera 0.1.0",
  "canvas 0.1.0",
  "colors 0.1.0",
  "lights 0.1.0",
- "materials 0.1.0",
  "matrices 0.1.0",
  "rays 0.1.0",
  "transformations 0.1.0",
@@ -98,7 +82,7 @@ dependencies = [
 
 [[package]]
 name = "float-cmp"
-version = "0.5.2"
+version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "num-traits 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -107,6 +91,11 @@ dependencies = [
 [[package]]
 name = "fuchsia-cprng"
 version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "lazy_static"
+version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
@@ -123,19 +112,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "materials"
-version = "0.1.0"
-dependencies = [
- "colors 0.1.0",
- "lights 0.1.0",
- "tuples 0.1.0",
-]
-
-[[package]]
 name = "matrices"
 version = "0.1.0"
 dependencies = [
- "float-cmp 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "float-cmp 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "tuples 0.1.0",
 ]
 
@@ -272,7 +252,7 @@ dependencies = [
 name = "tuples"
 version = "0.1.0"
 dependencies = [
- "float-cmp 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "float-cmp 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -306,9 +286,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "world"
 version = "0.1.0"
 dependencies = [
+ "canvas 0.1.0",
  "colors 0.1.0",
+ "float-cmp 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "lights 0.1.0",
- "materials 0.1.0",
  "matrices 0.1.0",
  "rays 0.1.0",
  "transformations 0.1.0",
@@ -320,8 +302,9 @@ dependencies = [
 "checksum autocfg 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = "b671c8fb71b457dd4ae18c4ba1e59aa81793daacc361d82fcd410cef0d491875"
 "checksum bitflags 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "cf1de2fe8c75bc145a2f577add951f8134889b4795d47466a54a5c846d691693"
 "checksum cloudabi 0.0.3 (registry+https://github.com/rust-lang/crates.io-index)" = "ddfc5b9aa5d4507acaf872de71051dfd0e309860e88966e1051e462a077aac4f"
-"checksum float-cmp 0.5.2 (registry+https://github.com/rust-lang/crates.io-index)" = "7ef4eee449a2818084dad09f4fcd6e6e8932c482d8d94298493226782bb45b5e"
+"checksum float-cmp 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)" = "75224bec9bfe1a65e2d34132933f2de7fe79900c96a0174307554244ece8150e"
 "checksum fuchsia-cprng 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "a06f77d526c1a601b7c4cdd98f54b5eaabffc14d5f2f0296febdc7f357c6d3ba"
+"checksum lazy_static 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 "checksum libc 0.2.65 (registry+https://github.com/rust-lang/crates.io-index)" = "1a31a0627fdf1f6a39ec0dd577e101440b7db22672c0901fe00a9a6fbb5c24e8"
 "checksum num-traits 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)" = "6ba9a427cfca2be13aa6f6403b0b7e7368fe982bfa16fccc450ce74c46cd9b32"
 "checksum rand 0.6.5 (registry+https://github.com/rust-lang/crates.io-index)" = "6d71dacdc3c88c1fde3885a3be3fbab9f35724e6ce99467f7d9c5026132184ca"

@@ -14,6 +14,4 @@ rays = { path = "../rays" }
 matrices = { path = "../matrices" }
 transformations = { path = "../transformations" }
 lights = { path = "../lights" }
-materials = { path = "../materials" }
 world = { path = "../world" }
-camera = { path = "../camera" }

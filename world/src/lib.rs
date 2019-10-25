@@ -1,5 +1,8 @@
+pub mod camera;
 pub mod intersections;
+pub mod materials;
 pub mod object;
+pub mod patterns;
 pub mod planes;
 pub mod shape;
 pub mod spheres;
@@ -42,6 +45,7 @@ impl World {
 
     pub fn shade_hit(&self, comps: &Computations) -> Color {
         comps.object.material.lightning(
+            &comps.object,
             &self.light_source.as_ref().unwrap(),
             &comps.point,
             &comps.eyev,

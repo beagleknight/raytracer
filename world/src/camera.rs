@@ -1,8 +1,8 @@
+use crate::World;
 use canvas::Canvas;
 use matrices::{inverse, matrix_tuple_multiply, IDENTITY};
 use rays::Ray;
 use tuples::{normalize, point};
-use world::World;
 
 pub struct Camera {
     pub hsize: i32,
@@ -70,15 +70,13 @@ impl Camera {
 
 #[cfg(test)]
 mod tests {
+    use crate::{camera::Camera, World};
     use colors::color;
     use core::f64::consts::PI;
     use float_cmp::ApproxEq;
     use matrices::IDENTITY;
     use transformations::{view_transform, MatrixTransformations};
     use tuples::{point, vector};
-    use world::World;
-
-    use crate::*;
 
     #[test]
     fn constructing_a_camera() {

@@ -10,8 +10,10 @@ edition = "2018"
 uuid = { version = "0.7", features = ["v4"] }
 matrices = { path = "../matrices" }
 transformations = { path = "../transformations" }
-materials = { path = "../materials" }
 tuples = { path = "../tuples" }
 rays = { path = "../rays" }
 lights = { path = "../lights" }
+canvas = { path = "../canvas" }
 colors = { path = "../colors" }
+lazy_static = "1.4.0"
+float-cmp = "0.5.3"
