@@ -9,28 +9,16 @@ use std::fs::File;
 use std::io::prelude::*;
 use transformations::{view_transform, MatrixTransformations};
 use tuples::{point, vector};
-use world::{object::Object, spheres::Sphere, World};
+use world::{object::Object, planes::Plane, spheres::Sphere, World};
 
 fn main() -> std::io::Result<()> {
-    let mut floor = Object::new(Box::new(Sphere::default()));
-    floor.transform = IDENTITY.scale(10.0, 0.01, 10.0);
+    let canvas_width = 600;
+    let canvas_height = 300;
+    let mut floor = Object::new(Box::new(Plane::default()));
+    floor.transform = IDENTITY.scale(10.0, 1.0, 10.0);
     floor.material = Material::default();
     floor.material.color = color(1.0, 0.9, 0.9);
     floor.material.specular = 0.0;
-    let mut left_wall = Object::new(Box::new(Sphere::default()));
-    left_wall.transform = IDENTITY
-        .scale(10.0, 0.01, 10.0)
-        .rotate_x(PI / 2.0)
-        .rotate_y(-PI / 4.0)
-        .translate(0.0, 0.0, 5.0);
-    left_wall.material = floor.material;
-    let mut right_wall = Object::new(Box::new(Sphere::default()));
-    right_wall.transform = IDENTITY
-        .scale(10.0, 0.01, 10.0)
-        .rotate_x(PI / 2.0)
-        .rotate_y(PI / 4.0)
-        .translate(0.0, 0.0, 5.0);
-    right_wall.material = floor.material;
     let mut middle = Object::new(Box::new(Sphere::default()));
     middle.transform = IDENTITY.translate(-0.5, 1.0, 0.5);
     middle.material = Material::default();
@@ -57,9 +45,9 @@ fn main() -> std::io::Result<()> {
         position: point(-10.0, 10.0, -10.0),
         intensity: color(1.0, 1.0, 1.0),
     });
-    world.objects = vec![floor, left_wall, right_wall, middle, right, left];
+    world.objects = vec![floor, middle, right, left];
 
-    let mut camera = Camera::new(600, 300, PI / 3.0);
+    let mut camera = Camera::new(canvas_width, canvas_height, PI / 3.0);
     camera.transform = view_transform(
         &point(0.0, 1.5, -5.0),
         &point(0.0, 1.0, 0.0),

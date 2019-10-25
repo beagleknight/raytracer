@@ -1,6 +1,7 @@
 use matrices::matrix_tuple_multiply;
 use tuples::Tuple;
 
+#[derive(Debug)]
 pub struct Ray {
     pub origin: Tuple,
     pub direction: Tuple,

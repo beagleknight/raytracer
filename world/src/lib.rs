@@ -1,5 +1,6 @@
 pub mod intersections;
 pub mod object;
+pub mod planes;
 pub mod shape;
 pub mod spheres;
 

@@ -11,7 +11,6 @@ members = [
   "materials",
   "world",
   "camera",
-  "shapes",
   "cannon",
   "clock",
   "draw_sphere",
