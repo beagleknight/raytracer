@@ -9,7 +9,7 @@ pub struct RingPatternShape {
 
 impl PatternShape for RingPatternShape {
     fn pattern_at(&self, point: &Tuple) -> Color {
-        if (point.x.powf(2.0) + point.z.powf(2.0)).sqrt() % 2.0 == 0.0 {
+        if (point.x.powf(2.0) + point.z.powf(2.0)).sqrt().floor() % 2.0 == 0.0 {
             return self.a;
         }
         self.b
