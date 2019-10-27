@@ -1,3 +1,4 @@
+pub mod gradient;
 pub mod stripes;
 
 use crate::object::Object;
