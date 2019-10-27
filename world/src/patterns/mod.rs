@@ -1,5 +1,7 @@
 pub mod gradient;
 pub mod stripes;
+pub mod ring;
+pub mod checkers;
 
 use crate::object::Object;
 use colors::Color;

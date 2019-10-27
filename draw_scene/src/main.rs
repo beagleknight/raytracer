@@ -9,8 +9,15 @@ use std::rc::Rc;
 use transformations::{view_transform, MatrixTransformations};
 use tuples::{point, vector};
 use world::{
-    camera::Camera, materials::Material, object::Object, patterns::gradient::GradientPatternShape,
-    patterns::stripes::StripesPatternShape, patterns::Pattern, planes::Plane, spheres::Sphere,
+    camera::Camera,
+    materials::Material,
+    object::Object,
+    patterns::{
+        checkers::CheckersPatternShape, gradient::GradientPatternShape, ring::RingPatternShape,
+        stripes::StripesPatternShape, Pattern,
+    },
+    planes::Plane,
+    spheres::Sphere,
     World,
 };
 
@@ -21,10 +28,11 @@ fn main() -> std::io::Result<()> {
     let mut floor_material = Material::default();
     floor_material.color = Color::new(1.0, 0.9, 0.9);
     floor_material.specular = 0.0;
-    floor_material.pattern = Some(Pattern::new(Box::new(StripesPatternShape {
-        a: Color::new(1.0, 1.0, 1.0),
-        b: Color::new(0.0, 0.0, 0.0),
+    floor_material.pattern = Some(Pattern::new(Box::new(RingPatternShape {
+        a: Color::new(1.0, 0.0, 0.0),
+        b: Color::new(0.0, 1.0, 0.0),
     })));
+    floor_material.pattern.as_mut().unwrap().transform = IDENTITY.scale(0.5, 0.5, 0.5);
     floor.transform = IDENTITY.scale(10.0, 1.0, 10.0);
     floor.material = Rc::new(floor_material);
     let mut middle = Object::new(Box::new(Sphere::default()));
@@ -45,6 +53,11 @@ fn main() -> std::io::Result<()> {
     right_material.color = Color::new(0.5, 1.0, 0.1);
     right_material.diffuse = 0.7;
     right_material.specular = 0.3;
+    right_material.pattern = Some(Pattern::new(Box::new(CheckersPatternShape {
+        a: Color::new(0.7, 0.4, 0.0),
+        b: Color::new(0.0, 1.0, 0.8),
+    })));
+    right_material.pattern.as_mut().unwrap().transform = IDENTITY.scale(0.5, 0.5, 0.5);
     right.transform = IDENTITY.scale(0.5, 0.5, 0.5).translate(1.5, 0.5, -0.5);
     right.material = Rc::new(right_material);
     let mut left = Object::new(Box::new(Sphere::default()));
@@ -52,6 +65,10 @@ fn main() -> std::io::Result<()> {
     left_material.color = Color::new(1.0, 0.8, 0.1);
     left_material.diffuse = 0.7;
     left_material.specular = 0.3;
+    left_material.pattern = Some(Pattern::new(Box::new(StripesPatternShape {
+        a: Color::new(1.0, 1.0, 1.0),
+        b: Color::new(0.0, 0.0, 0.0),
+    })));
     left.transform = IDENTITY
         .scale(0.33, 0.33, 0.33)
         .translate(-1.5, 0.33, -0.75);
