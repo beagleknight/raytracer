@@ -3,14 +3,12 @@ pub mod intersections;
 pub mod materials;
 pub mod object;
 pub mod patterns;
-pub mod planes;
-pub mod shape;
-pub mod spheres;
+pub mod shapes;
 
 use crate::intersections::{hit, Computations, Intersection};
 use crate::materials::Material;
 use crate::object::Object;
-use crate::spheres::Sphere;
+use crate::shapes::{spheres::Sphere};
 use colors::Color;
 use lights::PointLight;
 use matrices::IDENTITY;
@@ -115,7 +113,7 @@ mod tests {
     use crate::intersections::Intersection;
     use crate::materials::Material;
     use crate::object::Object;
-    use crate::spheres::Sphere;
+    use crate::shapes::{spheres::Sphere};
     use crate::World;
     use colors::Color;
     use lights::PointLight;

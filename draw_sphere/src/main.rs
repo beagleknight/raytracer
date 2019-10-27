@@ -6,7 +6,7 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::rc::Rc;
 use tuples::{normalize, point};
-use world::{materials::Material, object::Object, spheres::Sphere};
+use world::{materials::Material, object::Object, shapes::{spheres::Sphere}};
 
 fn main() -> std::io::Result<()> {
     let canvas_size = 500;

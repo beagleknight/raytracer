@@ -1,6 +1,6 @@
 use crate::object::Object;
 use rays::Ray;
-use tuples::{dot, Tuple};
+use tuples::{dot, reflect, Tuple};
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Intersection<'a> {
@@ -15,10 +15,15 @@ pub struct Computations<'a> {
     pub over_point: Tuple,
     pub eyev: Tuple,
     pub normalv: Tuple,
+    pub reflectv: Tuple,
     pub inside: bool,
 }
 
 impl<'a> Intersection<'a> {
+    pub fn new(t: f64, object: &'a Object) -> Intersection<'a> {
+        Intersection { t, object }
+    }
+
     pub fn prepare_computations(&self, ray: &Ray) -> Computations {
         let world_point = ray.position(self.t);
         let eyev = -ray.direction;
@@ -30,6 +35,8 @@ impl<'a> Intersection<'a> {
             normalv = -normalv;
         }
 
+        let reflectv = reflect(&ray.direction, &normalv);
+
         Computations {
             t: self.t,
             object: self.object,
@@ -37,6 +44,7 @@ impl<'a> Intersection<'a> {
             over_point: world_point + normalv * 0.00001,
             eyev,
             normalv,
+            reflectv,
             inside,
         }
     }
@@ -60,7 +68,9 @@ pub fn hit<'a>(intersections: &'a [Intersection]) -> Option<&'a Intersection<'a>
 mod tests {
     use crate::intersections::{hit, Intersection};
     use crate::object::Object;
-    use crate::shape::test::TestShape;
+    use crate::shapes::{test::TestShape, planes::Plane};
+    use rays::Ray;
+    use tuples::{point, vector};
 
     #[test]
     fn intersection_encapsulates_t_and_object() {
@@ -138,5 +148,21 @@ mod tests {
         let xs = vec![i1, i2, i3, i4];
         let i = hit(&xs);
         assert_eq!(i.unwrap(), &xs[3]);
+    }
+
+    #[test]
+    fn precomputing_the_reflection_vector() {
+        let shape = Plane::default();
+        let o = Object::new(Box::new(shape));
+        let r = Ray::new(
+            point(0.0, 1.0, -1.0),
+            vector(0.0, -(2.0 as f64).sqrt() / 2.0, (2.0 as f64).sqrt() / 2.0),
+        );
+        let i = Intersection::new((2.0 as f64).sqrt(), &o);
+        let comps = i.prepare_computations(&r);
+        assert_eq!(
+            comps.reflectv,
+            vector(0.0, (2.0 as f64).sqrt() / 2.0, (2.0 as f64).sqrt() / 2.0)
+        );
     }
 }

@@ -16,8 +16,7 @@ use world::{
         checkers::CheckersPatternShape, gradient::GradientPatternShape, ring::RingPatternShape,
         stripes::StripesPatternShape, Pattern,
     },
-    planes::Plane,
-    spheres::Sphere,
+    shapes::{planes::Plane, spheres::Sphere},
     World,
 };
 

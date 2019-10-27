@@ -1,7 +1,7 @@
-pub mod gradient;
-pub mod stripes;
-pub mod ring;
 pub mod checkers;
+pub mod gradient;
+pub mod ring;
+pub mod stripes;
 
 use crate::object::Object;
 use colors::Color;
@@ -37,7 +37,7 @@ mod tests {
     use crate::{
         object::Object,
         patterns::{Pattern, PatternShape},
-        spheres::Sphere,
+        shapes::spheres::Sphere,
     };
     use colors::Color;
     use matrices::IDENTITY;

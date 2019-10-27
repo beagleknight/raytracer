@@ -1,3 +1,6 @@
+pub mod planes;
+pub mod spheres;
+
 use rays::Ray;
 use std::any::Any;
 use tuples::Tuple;
@@ -9,7 +12,7 @@ pub trait Shape: Any {
 }
 
 pub mod test {
-    use crate::shape::Shape;
+    use crate::shapes::Shape;
     use rays::Ray;
     use std::any::Any;
     use std::cell::RefCell;

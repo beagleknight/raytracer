@@ -1,4 +1,4 @@
-use crate::shape::Shape;
+use crate::shapes::Shape;
 use rays::Ray;
 use std::any::Any;
 use tuples::{dot, point, Tuple};
@@ -40,7 +40,7 @@ impl Default for Sphere {
 
 #[cfg(test)]
 mod tests {
-    use crate::spheres::Sphere;
+    use crate::shapes::{spheres::Sphere};
     use crate::{intersections::Intersection, object::Object};
     use matrices::IDENTITY;
     use rays::Ray;

@@ -1,6 +1,6 @@
 use crate::intersections::Intersection;
 use crate::materials::Material;
-use crate::shape::Shape;
+use crate::shapes::Shape;
 use matrices::{inverse, matrix_tuple_multiply, transpose, IDENTITY};
 use rays::Ray;
 use std::rc::Rc;
@@ -70,7 +70,7 @@ impl std::fmt::Debug for Object {
 mod tests {
     use crate::materials::Material;
     use crate::object::Object;
-    use crate::shape::test::TestShape;
+    use crate::shapes::test::TestShape;
     use matrices::IDENTITY;
     use rays::Ray;
     use std::f64::consts::PI;

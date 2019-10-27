@@ -1,4 +1,4 @@
-use crate::shape::Shape;
+use crate::shapes::Shape;
 use rays::Ray;
 use std::any::Any;
 use tuples::{vector, Tuple};
@@ -31,8 +31,7 @@ impl Shape for Plane {
 
 #[cfg(test)]
 mod test {
-    use crate::planes::Plane;
-    use crate::shape::Shape;
+    use crate::shapes::{planes::Plane, Shape};
     use rays::Ray;
     use tuples::{point, vector};
 
