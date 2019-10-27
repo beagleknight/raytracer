@@ -13,7 +13,7 @@ impl Default for Plane {
 
 impl Shape for Plane {
     fn intersects_at(&self, ray: &Ray) -> Option<[f64; 2]> {
-        if ray.direction.y.abs() < 0.00001 {
+        if ray.direction.y.abs() < 0.0001 {
             return None;
         }
         let t = -ray.origin.y / ray.direction.y;

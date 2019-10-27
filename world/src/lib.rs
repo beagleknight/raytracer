@@ -8,7 +8,7 @@ pub mod shapes;
 use crate::intersections::{hit, Computations, Intersection};
 use crate::materials::Material;
 use crate::object::Object;
-use crate::shapes::{spheres::Sphere};
+use crate::shapes::spheres::Sphere;
 use colors::Color;
 use lights::PointLight;
 use matrices::IDENTITY;
@@ -83,6 +83,17 @@ impl World {
             None => false,
         }
     }
+
+    pub fn reflected_color(&self, comps: &Computations) -> Color {
+        if comps.object.material.reflective == 0.0 {
+            return Color::new(0.0, 0.0, 0.0);
+        }
+
+        let reflect_ray = Ray::new(comps.over_point, comps.reflectv);
+        let color = self.color_at(&reflect_ray);
+
+        color * comps.object.material.reflective
+    }
 }
 
 impl Default for World {
@@ -113,7 +124,7 @@ mod tests {
     use crate::intersections::Intersection;
     use crate::materials::Material;
     use crate::object::Object;
-    use crate::shapes::{spheres::Sphere};
+    use crate::shapes::{planes::Plane, spheres::Sphere};
     use crate::World;
     use colors::Color;
     use lights::PointLight;
@@ -261,5 +272,39 @@ mod tests {
         let comps = i.prepare_computations(&r);
         let c = w.shade_hit(&comps);
         assert_eq!(c, Color::new(0.1, 0.1, 0.1));
+    }
+
+    #[test]
+    fn reflected_color_for_a_nonreflective_material() {
+        let mut w = World::default();
+        let r = Ray::new(point(0.0, 0.0, 0.0), vector(0.0, 0.0, 1.0));
+        let mut material = Material::default();
+        material.ambient = 1.0;
+        let material = Rc::new(material);
+        w.objects[1].material = Rc::clone(&material);
+        let i = Intersection::new(1.0, &w.objects[1]);
+        let comps = i.prepare_computations(&r);
+        assert_eq!(w.reflected_color(&comps), Color::new(0.0, 0.0, 0.0));
+    }
+
+    #[test]
+    fn reflected_color_for_a_reflective_material() {
+        let mut w = World::default();
+        let mut plane = Object::new(Box::new(Plane::default()));
+        let mut material = Material::default();
+        material.reflective = 0.5;
+        plane.material = Rc::new(material);
+        plane.transform = IDENTITY.translate(0.0, -1.0, 0.0);
+        w.objects.push(plane);
+        let r = Ray::new(
+            point(0.0, 0.0, -3.0),
+            vector(0.0, -(2.0 as f64).sqrt() / 2.0, (2.0 as f64).sqrt() / 2.0),
+        );
+        let i = Intersection::new((2.0 as f64).sqrt(), &w.objects[2]);
+        let comps = i.prepare_computations(&r);
+        assert_eq!(
+            w.reflected_color(&comps),
+            Color::new(0.19032, 0.2379, 0.14274)
+        );
     }
 }

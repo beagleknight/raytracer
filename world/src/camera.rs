@@ -93,13 +93,13 @@ mod tests {
     #[test]
     fn pixel_size_for_a_horizontal_canvas() {
         let c = Camera::new(200, 125, PI / 2.0);
-        assert!(c.pixel_size.approx_eq(0.01, (0.00001, 2)));
+        assert!(c.pixel_size.approx_eq(0.01, (0.0001, 2)));
     }
 
     #[test]
     fn pixel_size_for_a_vertical_canvas() {
         let c = Camera::new(125, 200, PI / 2.0);
-        assert!(c.pixel_size.approx_eq(0.01, (0.00001, 2)));
+        assert!(c.pixel_size.approx_eq(0.01, (0.0001, 2)));
     }
 
     #[test]

@@ -41,7 +41,7 @@ impl<'a> Intersection<'a> {
             t: self.t,
             object: self.object,
             point: world_point,
-            over_point: world_point + normalv * 0.00001,
+            over_point: world_point + normalv * 0.0001,
             eyev,
             normalv,
             reflectv,
@@ -68,7 +68,7 @@ pub fn hit<'a>(intersections: &'a [Intersection]) -> Option<&'a Intersection<'a>
 mod tests {
     use crate::intersections::{hit, Intersection};
     use crate::object::Object;
-    use crate::shapes::{test::TestShape, planes::Plane};
+    use crate::shapes::{planes::Plane, test::TestShape};
     use rays::Ray;
     use tuples::{point, vector};
 

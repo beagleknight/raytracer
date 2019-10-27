@@ -172,7 +172,7 @@ pub fn inverse(a: &[[f64; 4]; 4]) -> [[f64; 4]; 4] {
 pub fn approx_eq(a: &[[f64; 4]; 4], b: &[[f64; 4]; 4]) -> bool {
     for row in 0..4 {
         for col in 0..4 {
-            if !a[row][col].approx_eq(b[row][col], (0.00001, 2)) {
+            if !a[row][col].approx_eq(b[row][col], (0.0001, 2)) {
                 return false;
             }
         }

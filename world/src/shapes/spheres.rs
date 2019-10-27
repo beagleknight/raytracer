@@ -40,7 +40,7 @@ impl Default for Sphere {
 
 #[cfg(test)]
 mod tests {
-    use crate::shapes::{spheres::Sphere};
+    use crate::shapes::spheres::Sphere;
     use crate::{intersections::Intersection, object::Object};
     use matrices::IDENTITY;
     use rays::Ray;
@@ -235,7 +235,7 @@ mod tests {
         o.transform = IDENTITY.translate(0.0, 0.0, 1.0);
         let i = Intersection { t: 5.0, object: &o };
         let comps = i.prepare_computations(&r);
-        assert!(comps.over_point.z < -0.00001 / 2.0);
+        assert!(comps.over_point.z < -0.0001 / 2.0);
         assert!(comps.point.z > comps.over_point.z);
     }
 }
