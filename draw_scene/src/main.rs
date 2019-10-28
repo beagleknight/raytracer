@@ -28,9 +28,10 @@ fn main() -> std::io::Result<()> {
     floor_material.color = Color::new(1.0, 0.9, 0.9);
     floor_material.specular = 0.0;
     floor_material.pattern = Some(Pattern::new(Box::new(RingPatternShape {
-        a: Color::new(1.0, 0.0, 0.0),
-        b: Color::new(0.0, 1.0, 0.0),
+        a: Color::new(0.8, 0.8, 0.8),
+        b: Color::new(0.5, 0.5, 0.5),
     })));
+    floor_material.reflective = 0.5;
     floor_material.pattern.as_mut().unwrap().transform = IDENTITY.scale(0.5, 0.5, 0.5);
     floor.transform = IDENTITY.scale(10.0, 1.0, 10.0);
     floor.material = Rc::new(floor_material);
@@ -44,7 +45,7 @@ fn main() -> std::io::Result<()> {
         b: Color::new(0.0, 1.0, 0.0),
     })));
     middle_material.pattern.as_mut().unwrap().transform =
-        IDENTITY.scale(2.0, 1.0, 1.0).translate(-1.0, 0.0, 0.0);
+        IDENTITY.scale(2.0, 1.0, 1.0).translate(1.0, 0.0, 0.0);
     middle.material = Rc::new(middle_material);
     middle.transform = IDENTITY.translate(-0.5, 1.0, 0.5);
     let mut right = Object::new(Box::new(Sphere::default()));
@@ -68,13 +69,15 @@ fn main() -> std::io::Result<()> {
         a: Color::new(1.0, 1.0, 1.0),
         b: Color::new(0.0, 0.0, 0.0),
     })));
+    left_material.pattern.as_mut().unwrap().transform = IDENTITY.scale(0.25, 1.0, 1.0);
+    left_material.reflective = 0.5;
     left.transform = IDENTITY
         .scale(0.33, 0.33, 0.33)
         .translate(-1.5, 0.33, -0.75);
     left.material = Rc::new(left_material);
     let mut world = World::new();
     world.light_source = Some(PointLight {
-        position: point(-10.0, 10.0, -10.0),
+        position: point(-5.0, 5.0, -5.0),
         intensity: Color::new(1.0, 1.0, 1.0),
     });
     world.objects = vec![floor, middle, right, left];

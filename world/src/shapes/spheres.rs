@@ -1,9 +1,21 @@
+use crate::materials::Material;
+use crate::object::Object;
 use crate::shapes::Shape;
 use rays::Ray;
 use std::any::Any;
+use std::rc::Rc;
 use tuples::{dot, point, Tuple};
 
 pub struct Sphere {}
+
+impl Sphere {
+    pub fn glass() -> Object {
+        let shape = Sphere::default();
+        let mut object = Object::new(Box::new(shape));
+        object.material = Rc::new(Material::glass());
+        object
+    }
+}
 
 impl Shape for Sphere {
     fn intersects_at(&self, ray: &Ray) -> Option<[f64; 2]> {
@@ -188,7 +200,7 @@ mod tests {
         let shape = Sphere::default();
         let o = Object::new(Box::new(shape));
         let i = Intersection { t: 4.0, object: &o };
-        let comps = i.prepare_computations(&r);
+        let comps = i.prepare_computations(&r, &[&i]);
         assert_eq!(comps.object, &o);
         assert_eq!(comps.point, point(0.0, 0.0, -1.0));
         assert_eq!(comps.eyev, vector(0.0, 0.0, -1.0));
@@ -204,7 +216,7 @@ mod tests {
         let shape = Sphere::default();
         let o = Object::new(Box::new(shape));
         let i = Intersection { t: 4.0, object: &o };
-        let comps = i.prepare_computations(&r);
+        let comps = i.prepare_computations(&r, &[&i]);
         assert!(!comps.inside);
     }
 
@@ -217,7 +229,7 @@ mod tests {
         let shape = Sphere::default();
         let o = Object::new(Box::new(shape));
         let i = Intersection { t: 1.0, object: &o };
-        let comps = i.prepare_computations(&r);
+        let comps = i.prepare_computations(&r, &[&i]);
         assert_eq!(comps.point, point(0.0, 0.0, 1.0));
         assert_eq!(comps.eyev, vector(0.0, 0.0, -1.0));
         assert_eq!(comps.normalv, vector(0.0, 0.0, -1.0));
@@ -234,8 +246,16 @@ mod tests {
         let mut o = Object::new(Box::new(shape));
         o.transform = IDENTITY.translate(0.0, 0.0, 1.0);
         let i = Intersection { t: 5.0, object: &o };
-        let comps = i.prepare_computations(&r);
+        let comps = i.prepare_computations(&r, &[&i]);
         assert!(comps.over_point.z < -0.0001 / 2.0);
         assert!(comps.point.z > comps.over_point.z);
+    }
+
+    #[test]
+    fn helper_for_producing_a_sphere_with_a_glassy_material() {
+        let s = Sphere::glass();
+        assert_eq!(s.transform, IDENTITY);
+        assert_eq!(s.material.transparency, 1.0);
+        assert_eq!(s.material.refractive_index, 1.5);
     }
 }

@@ -1,4 +1,4 @@
-use crate::World;
+use crate::{World, RAY_LIMIT};
 use canvas::Canvas;
 use matrices::{inverse, matrix_tuple_multiply, IDENTITY};
 use rays::Ray;
@@ -59,7 +59,7 @@ impl Camera {
         for y in 0..self.vsize {
             for x in 0..self.hsize {
                 let ray = self.ray_for_pixel(x, y);
-                let color = world.color_at(&ray);
+                let color = world.color_at(&ray, RAY_LIMIT);
                 image.write_pixel(x as usize, y as usize, color);
             }
         }

@@ -17,6 +17,8 @@ use std::rc::Rc;
 use transformations::MatrixTransformations;
 use tuples::{magnitude, normalize, point, Tuple};
 
+pub const RAY_LIMIT: u32 = 5;
+
 pub struct World {
     pub light_source: Option<PointLight>,
     pub objects: Vec<Object>,
@@ -43,24 +45,26 @@ impl World {
         result
     }
 
-    pub fn shade_hit(&self, comps: &Computations) -> Color {
-        comps.object.material.lightning(
+    pub fn shade_hit(&self, comps: &Computations, remaining: u32) -> Color {
+        let surface = comps.object.material.lightning(
             &comps.object,
             &self.light_source.as_ref().unwrap(),
             &comps.point,
             &comps.eyev,
             &comps.normalv,
             self.is_shadowed(&comps.over_point),
-        )
+        );
+        let reflected = self.reflected_color(comps, remaining);
+        surface + reflected
     }
 
-    pub fn color_at(&self, ray: &Ray) -> Color {
+    pub fn color_at(&self, ray: &Ray, remaining: u32) -> Color {
         let intersections = self.intersect(ray);
 
         match hit(&intersections) {
             Some(intersection) => {
-                let comps = intersection.prepare_computations(ray);
-                self.shade_hit(&comps)
+                let comps = intersection.prepare_computations(ray, &[intersection]);
+                self.shade_hit(&comps, remaining)
             }
             None => Color::new(0.0, 0.0, 0.0),
         }
@@ -84,13 +88,13 @@ impl World {
         }
     }
 
-    pub fn reflected_color(&self, comps: &Computations) -> Color {
-        if comps.object.material.reflective == 0.0 {
+    pub fn reflected_color(&self, comps: &Computations, remaining: u32) -> Color {
+        if remaining <= 0 || comps.object.material.reflective == 0.0 {
             return Color::new(0.0, 0.0, 0.0);
         }
 
         let reflect_ray = Ray::new(comps.over_point, comps.reflectv);
-        let color = self.color_at(&reflect_ray);
+        let color = self.color_at(&reflect_ray, remaining - 1);
 
         color * comps.object.material.reflective
     }
@@ -125,7 +129,7 @@ mod tests {
     use crate::materials::Material;
     use crate::object::Object;
     use crate::shapes::{planes::Plane, spheres::Sphere};
-    use crate::World;
+    use crate::{World, RAY_LIMIT};
     use colors::Color;
     use lights::PointLight;
     use matrices::IDENTITY;
@@ -178,8 +182,8 @@ mod tests {
         };
         let object = &w.objects[0];
         let i = Intersection { t: 4.0, object };
-        let comps = i.prepare_computations(&r);
-        let c = w.shade_hit(&comps);
+        let comps = i.prepare_computations(&r, &[&i]);
+        let c = w.shade_hit(&comps, RAY_LIMIT);
         assert_eq!(c, Color::new(0.38066, 0.47583, 0.2855));
     }
 
@@ -190,7 +194,7 @@ mod tests {
             origin: point(0.0, 0.0, -5.0),
             direction: vector(0.0, 1.0, 0.0),
         };
-        let c = w.color_at(&r);
+        let c = w.color_at(&r, RAY_LIMIT);
         assert_eq!(c, Color::new(0.0, 0.0, 0.0));
     }
 
@@ -201,7 +205,7 @@ mod tests {
             origin: point(0.0, 0.0, -5.0),
             direction: vector(0.0, 0.0, 1.0),
         };
-        let c = w.color_at(&r);
+        let c = w.color_at(&r, RAY_LIMIT);
         assert_eq!(c, Color::new(0.38066, 0.47583, 0.2855));
     }
 
@@ -218,7 +222,7 @@ mod tests {
             origin: point(0.0, 0.0, 0.75),
             direction: vector(0.0, 0.0, -1.0),
         };
-        let c = w.color_at(&r);
+        let c = w.color_at(&r, RAY_LIMIT);
         assert_eq!(c, inner.material.color);
     }
 
@@ -269,8 +273,8 @@ mod tests {
             t: 4.0,
             object: &w.objects[1],
         };
-        let comps = i.prepare_computations(&r);
-        let c = w.shade_hit(&comps);
+        let comps = i.prepare_computations(&r, &[&i]);
+        let c = w.shade_hit(&comps, RAY_LIMIT);
         assert_eq!(c, Color::new(0.1, 0.1, 0.1));
     }
 
@@ -283,8 +287,11 @@ mod tests {
         let material = Rc::new(material);
         w.objects[1].material = Rc::clone(&material);
         let i = Intersection::new(1.0, &w.objects[1]);
-        let comps = i.prepare_computations(&r);
-        assert_eq!(w.reflected_color(&comps), Color::new(0.0, 0.0, 0.0));
+        let comps = i.prepare_computations(&r, &[&i]);
+        assert_eq!(
+            w.reflected_color(&comps, RAY_LIMIT),
+            Color::new(0.0, 0.0, 0.0)
+        );
     }
 
     #[test]
@@ -301,10 +308,73 @@ mod tests {
             vector(0.0, -(2.0 as f64).sqrt() / 2.0, (2.0 as f64).sqrt() / 2.0),
         );
         let i = Intersection::new((2.0 as f64).sqrt(), &w.objects[2]);
-        let comps = i.prepare_computations(&r);
+        let comps = i.prepare_computations(&r, &[&i]);
         assert_eq!(
-            w.reflected_color(&comps),
+            w.reflected_color(&comps, RAY_LIMIT),
             Color::new(0.19032, 0.2379, 0.14274)
         );
+    }
+
+    #[test]
+    fn shade_hit_for_a_reflective_material() {
+        let mut w = World::default();
+        let mut plane = Object::new(Box::new(Plane::default()));
+        let mut material = Material::default();
+        material.reflective = 0.5;
+        plane.material = Rc::new(material);
+        plane.transform = IDENTITY.translate(0.0, -1.0, 0.0);
+        w.objects.push(plane);
+        let r = Ray::new(
+            point(0.0, 0.0, -3.0),
+            vector(0.0, -(2.0 as f64).sqrt() / 2.0, (2.0 as f64).sqrt() / 2.0),
+        );
+        let i = Intersection::new((2.0 as f64).sqrt(), &w.objects[2]);
+        let comps = i.prepare_computations(&r, &[&i]);
+        assert_eq!(
+            w.shade_hit(&comps, RAY_LIMIT),
+            Color::new(0.87677, 0.92436, 0.82918)
+        );
+    }
+
+    #[test]
+    fn color_at_with_manually_reflective_surfaces() {
+        let mut w = World::new();
+        w.light_source = Some(PointLight::new(
+            point(0.0, 0.0, 0.0),
+            Color::new(1.0, 1.0, 1.0),
+        ));
+        let material = {
+            let mut m = Material::default();
+            m.reflective = 0.5;
+            Rc::new(m)
+        };
+        let mut lower = Object::new(Box::new(Plane::default()));
+        lower.material = Rc::clone(&material);
+        lower.transform = IDENTITY.translate(0.0, -1.0, 0.0);
+        w.objects.push(lower);
+        let mut upper = Object::new(Box::new(Plane::default()));
+        upper.material = Rc::clone(&material);
+        upper.transform = IDENTITY.translate(0.0, 1.0, 0.0);
+        w.objects.push(upper);
+        let r = Ray::new(point(0.0, 0.0, 0.0), vector(0.0, 1.0, 0.0));
+        w.color_at(&r, RAY_LIMIT);
+    }
+
+    #[test]
+    fn reflected_color_at_the_maximum_recursive_depth() {
+        let mut w = World::default();
+        let mut plane = Object::new(Box::new(Plane::default()));
+        let mut material = Material::default();
+        material.reflective = 0.5;
+        plane.material = Rc::new(material);
+        plane.transform = IDENTITY.translate(0.0, -1.0, 0.0);
+        w.objects.push(plane);
+        let r = Ray::new(
+            point(0.0, 0.0, -3.0),
+            vector(0.0, -(2.0 as f64).sqrt() / 2.0, (2.0 as f64).sqrt() / 2.0),
+        );
+        let i = Intersection::new((2.0 as f64).sqrt(), &w.objects[2]);
+        let comps = i.prepare_computations(&r, &[&i]);
+        assert_eq!(w.reflected_color(&comps, 0), Color::new(0.0, 0.0, 0.0));
     }
 }

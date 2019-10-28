@@ -16,6 +16,8 @@ pub struct Computations<'a> {
     pub eyev: Tuple,
     pub normalv: Tuple,
     pub reflectv: Tuple,
+    pub n1: f64,
+    pub n2: f64,
     pub inside: bool,
 }
 
@@ -24,7 +26,11 @@ impl<'a> Intersection<'a> {
         Intersection { t, object }
     }
 
-    pub fn prepare_computations(&self, ray: &Ray) -> Computations {
+    pub fn prepare_computations(
+        &self,
+        ray: &Ray,
+        relative_intersections: &[&Intersection],
+    ) -> Computations {
         let world_point = ray.position(self.t);
         let eyev = -ray.direction;
         let mut normalv = self.object.normal_at(&world_point);
@@ -45,6 +51,8 @@ impl<'a> Intersection<'a> {
             eyev,
             normalv,
             reflectv,
+            n1: 0.0,
+            n2: 0.0,
             inside,
         }
     }
@@ -67,9 +75,13 @@ pub fn hit<'a>(intersections: &'a [Intersection]) -> Option<&'a Intersection<'a>
 #[cfg(test)]
 mod tests {
     use crate::intersections::{hit, Intersection};
+    use crate::materials::Material;
     use crate::object::Object;
-    use crate::shapes::{planes::Plane, test::TestShape};
+    use crate::shapes::{planes::Plane, spheres::Sphere, test::TestShape};
+    use matrices::IDENTITY;
     use rays::Ray;
+    use std::rc::Rc;
+    use transformations::MatrixTransformations;
     use tuples::{point, vector};
 
     #[test]
@@ -159,10 +171,57 @@ mod tests {
             vector(0.0, -(2.0 as f64).sqrt() / 2.0, (2.0 as f64).sqrt() / 2.0),
         );
         let i = Intersection::new((2.0 as f64).sqrt(), &o);
-        let comps = i.prepare_computations(&r);
+        let comps = i.prepare_computations(&r, &[&i]);
         assert_eq!(
             comps.reflectv,
             vector(0.0, (2.0 as f64).sqrt() / 2.0, (2.0 as f64).sqrt() / 2.0)
         );
+    }
+
+    #[test]
+    fn finding_n1_and_n2_at_various_intersections() {
+        fn run_scenario(index: usize, n1: f64, n2: f64) {
+            let mut a = Sphere::glass();
+            a.transform = IDENTITY.scale(2.0, 2.0, 2.0);
+            a.material = Rc::new({
+                let mut m = Material::glass();
+                m.refractive_index = 1.5;
+                m
+            });
+            let mut b = Sphere::glass();
+            b.transform = IDENTITY.translate(0.0, 0.0, -0.25);
+            b.material = Rc::new({
+                let mut m = Material::glass();
+                m.refractive_index = 2.0;
+                m
+            });
+            let mut c = Sphere::glass();
+            c.transform = IDENTITY.translate(0.0, 0.0, 0.25);
+            c.material = Rc::new({
+                let mut m = Material::glass();
+                m.refractive_index = 2.5;
+                m
+            });
+            let r = Ray::new(point(0.0, 0.0, -4.0), vector(0.0, 0.0, 1.0));
+            let xs = [
+                Intersection::new(2.0, &a),
+                Intersection::new(2.75, &b),
+                Intersection::new(3.25, &c),
+                Intersection::new(4.75, &b),
+                Intersection::new(5.25, &c),
+                Intersection::new(6.0, &a),
+            ];
+            let comps =
+                xs[index].prepare_computations(&r, &xs.iter().collect::<Vec<&Intersection>>());
+            assert_eq!(comps.n1, n1);
+            assert_eq!(comps.n2, n2);
+        }
+
+        run_scenario(0, 1.0, 1.5);
+        run_scenario(1, 1.5, 2.0);
+        run_scenario(2, 2.0, 2.5);
+        run_scenario(3, 2.5, 2.5);
+        run_scenario(4, 2.5, 1.5);
+        run_scenario(5, 1.5, 1.0);
     }
 }
