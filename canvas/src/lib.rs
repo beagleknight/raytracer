@@ -1,13 +1,15 @@
-use std::fmt::Write;
-
 use colors::Color;
+use std::fmt::Write;
+use wasm_bindgen::prelude::*;
 
+#[wasm_bindgen]
 pub struct Canvas {
     pub width: i32,
     pub height: i32,
-    pub pixels: Vec<Color>,
+    pixels: Vec<Color>,
 }
 
+#[wasm_bindgen]
 impl Canvas {
     pub fn new(width: i32, height: i32) -> Canvas {
         canvas(width, height)
@@ -17,8 +19,15 @@ impl Canvas {
         write_pixel(self, x, y, color);
     }
 
-    pub fn pixel_at(&self, x: usize, y: usize) -> Option<&Color> {
-        pixel_at(self, x, y)
+    // pub fn pixel_at(&self, x: usize, y: usize) -> Option<&Color> {
+    //     pixel_at(self, x, y)
+    // }
+
+    pub fn color_at(&self, x: usize, y: usize) -> Color {
+        match self.pixels.get(x + y * self.width as usize) {
+            Some(color) => *color,
+            None => Color::new(0.0, 0.0, 0.0),
+        }
     }
 }
 

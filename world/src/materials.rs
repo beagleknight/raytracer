@@ -5,7 +5,7 @@ use tuples::{dot, normalize, reflect, Tuple};
 use uuid::Uuid;
 
 pub struct Material {
-    pub id: Uuid,
+    // pub id: Uuid,
     pub color: Color,
     pub ambient: f64,
     pub diffuse: f64,
@@ -65,7 +65,7 @@ impl Material {
 impl Default for Material {
     fn default() -> Self {
         Material {
-            id: Uuid::new_v4(),
+            // id: Uuid::new_v4(),
             color: Color::new(1.0, 1.0, 1.0),
             ambient: 0.1,
             diffuse: 0.9,
@@ -81,13 +81,15 @@ impl Default for Material {
 
 impl PartialEq for Material {
     fn eq(&self, other: &Self) -> bool {
-        self.id == other.id
+        // self.id == other.id
+        false
     }
 }
 
 impl std::fmt::Debug for Material {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
-        write!(f, "Material {}", self.id)
+        // write!(f, "Material {}", self.id)
+        write!(f, "Material")
     }
 }
 

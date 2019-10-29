@@ -12,5 +12,6 @@ members = [
   "cannon",
   "clock",
   "draw_sphere",
-  "draw_scene"
+  "draw_scene",
+  "raytracer-wasm"
 ]

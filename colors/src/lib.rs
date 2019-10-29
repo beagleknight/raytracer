@@ -1,5 +1,7 @@
 use float_cmp::ApproxEq;
+use wasm_bindgen::prelude::*;
 
+#[wasm_bindgen]
 #[derive(Debug, Copy, Clone)]
 pub struct Color {
     pub red: f64,

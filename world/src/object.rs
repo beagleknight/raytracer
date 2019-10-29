@@ -8,7 +8,7 @@ use tuples::{normalize, Tuple};
 use uuid::Uuid;
 
 pub struct Object {
-    pub id: Uuid,
+    // pub id: Uuid,
     pub transform: [[f64; 4]; 4],
     pub material: Rc<Material>,
     pub shape: Box<dyn Shape>,
@@ -46,7 +46,7 @@ impl Object {
 impl Object {
     pub fn new(shape: Box<dyn Shape>) -> Object {
         Object {
-            id: Uuid::new_v4(),
+            // id: Uuid::new_v4(),
             transform: IDENTITY,
             material: Rc::new(Material::default()),
             shape,
@@ -56,13 +56,15 @@ impl Object {
 
 impl PartialEq for Object {
     fn eq(&self, other: &Self) -> bool {
-        self.id == other.id
+        // self.id == other.id
+        false
     }
 }
 
 impl std::fmt::Debug for Object {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::result::Result<(), std::fmt::Error> {
-        write!(f, "Object {}", self.id)
+        // write!(f, "Object {}", self.id)
+        write!(f, "Object")
     }
 }
 
