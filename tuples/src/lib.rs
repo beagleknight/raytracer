@@ -1,5 +1,7 @@
 use float_cmp::ApproxEq;
+use wasm_bindgen::prelude::*;
 
+#[wasm_bindgen]
 #[derive(Debug, Copy, Clone)]
 pub struct Tuple {
     pub x: f64,
@@ -8,6 +10,7 @@ pub struct Tuple {
     pub w: f64,
 }
 
+#[wasm_bindgen]
 impl Tuple {
     pub fn is_point(&self) -> bool {
         self.w == 1.0

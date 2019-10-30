@@ -376,6 +376,7 @@ dependencies = [
  "matrices 0.1.0",
  "transformations 0.1.0",
  "tuples 0.1.0",
+ "wasm-bindgen 0.2.52 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -383,6 +384,7 @@ name = "raytracer-wasm"
 version = "0.1.0"
 dependencies = [
  "canvas 0.1.0",
+ "colors 0.1.0",
  "console_error_panic_hook 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "transformations 0.1.0",
  "tuples 0.1.0",
@@ -449,6 +451,7 @@ name = "tuples"
 version = "0.1.0"
 dependencies = [
  "float-cmp 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "wasm-bindgen 0.2.52 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -642,6 +645,7 @@ dependencies = [
  "transformations 0.1.0",
  "tuples 0.1.0",
  "uuid 0.7.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "wasm-bindgen 0.2.52 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [metadata]

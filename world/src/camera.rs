@@ -2,18 +2,22 @@ use crate::{World, RAY_LIMIT};
 use canvas::Canvas;
 use matrices::{inverse, matrix_tuple_multiply, IDENTITY};
 use rays::Ray;
-use tuples::{normalize, point};
+use transformations::{view_transform, MatrixTransformations};
+use tuples::{normalize, point, vector};
+use wasm_bindgen::prelude::*;
 
+#[wasm_bindgen]
 pub struct Camera {
     pub hsize: i32,
     pub vsize: i32,
     pub half_width: f64,
     pub half_height: f64,
     pub field_of_view: f64,
-    pub transform: [[f64; 4]; 4],
+    transform: [[f64; 4]; 4],
     pub pixel_size: f64,
 }
 
+#[wasm_bindgen]
 impl Camera {
     pub fn new(hsize: i32, vsize: i32, field_of_view: f64) -> Camera {
         let half_view = (field_of_view / 2.0).tan();
@@ -32,7 +36,12 @@ impl Camera {
             half_width,
             half_height,
             field_of_view,
-            transform: IDENTITY,
+            // transform: IDENTITY,
+            transform: view_transform(
+                &point(0.0, 1.5, -10.0),
+                &point(0.0, 0.0, 0.0),
+                &vector(0.0, 1.0, 0.0),
+            ),
             pixel_size: (half_width * 2.0) / hsize as f64,
         }
     }

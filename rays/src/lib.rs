@@ -1,6 +1,8 @@
 use matrices::matrix_tuple_multiply;
 use tuples::Tuple;
+use wasm_bindgen::prelude::*;
 
+#[wasm_bindgen]
 #[derive(Debug)]
 pub struct Ray {
     pub origin: Tuple,
@@ -9,10 +11,7 @@ pub struct Ray {
 
 impl Ray {
     pub fn new(origin: Tuple, direction: Tuple) -> Ray {
-        Ray {
-            origin,
-            direction
-        }
+        Ray { origin, direction }
     }
 
     pub fn position(&self, t: f64) -> Tuple {

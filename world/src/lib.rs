@@ -16,12 +16,14 @@ use rays::Ray;
 use std::rc::Rc;
 use transformations::MatrixTransformations;
 use tuples::{magnitude, normalize, point, Tuple};
+use wasm_bindgen::prelude::*;
 
 pub const RAY_LIMIT: u32 = 5;
 
+#[wasm_bindgen]
 pub struct World {
-    pub light_source: Option<PointLight>,
-    pub objects: Vec<Object>,
+    light_source: Option<PointLight>,
+    objects: Vec<Object>,
 }
 
 impl World {
